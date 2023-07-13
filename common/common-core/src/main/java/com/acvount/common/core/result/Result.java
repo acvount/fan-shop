@@ -34,20 +34,20 @@ public class Result<T> implements Serializable {
         this.data = data;
     }
 
-    public static Result<Object> ok(Object data) {
-        return Result.builder().code(ResultStatus.SUCCESS.code).msg(ResultStatus.SUCCESS.message).data(data).build();
+    public static <T> Result<T> ok(T data) {
+        return Result.<T>builder().code(ResultStatus.SUCCESS.code).msg(ResultStatus.SUCCESS.message).data(data).build();
     }
 
-    public static Result<Object> ok(Object data, String msg) {
-        return Result.builder().code(ResultStatus.SUCCESS.code).msg(msg).data(data).build();
+    public static <T> Result<T> ok(T data, String msg) {
+        return Result.<T>builder().code(ResultStatus.SUCCESS.code).msg(msg).data(data).build();
     }
 
-    public static Result<Object> fail(String msg) {
-        return Result.builder().code(ResultStatus.FAIL.code).msg(msg).build();
+    public static <T> Result<T> fail(String msg) {
+        return Result.<T>builder().code(ResultStatus.FAIL.code).msg(msg).build();
     }
 
-    public static Result<Object> fail() {
-        return Result.builder().code(ResultStatus.FAIL.code).msg(ResultStatus.FAIL.message).build();
+    public static <T> Result<T> fail() {
+        return Result.<T>builder().code(ResultStatus.FAIL.code).msg(ResultStatus.FAIL.message).build();
     }
 
 

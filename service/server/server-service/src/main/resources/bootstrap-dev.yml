@@ -1,0 +1,55 @@
+server:
+  port: 9702
+
+spring:
+  application:
+    name: user-service
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.2.100:3306/fan_shop_user?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: 123456
+  cloud:
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+      config:
+        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        file-extension: yaml
+        extension-configs:
+          - data-id: user-dev.yaml
+            refresh: true
+          - data-id: common-dubbo-dev.yaml
+            refresh: true
+          - data-id: common-redis-dev.yaml
+            refresh: true
+          - data-id: common-mybatisplus.yaml
+            refresh: true
+dubbo:
+  application:
+    name: user-service
+    metadata-type: local
+    qos-enable: true
+    qos-port: -1
+    qos-accept-foreign-ip: false
+
+  protocol:
+    name: dubbo
+    port: -1
+
+  registry:
+    address: nacos://localhost:8848
+    username: nacos
+    password: cc1234567.
+    group: DEFAULT_GROUP
+    parameters:
+      "namespace": f5d53f37-d171-43c7-9b77-01c64eeae769
+    check: false
+    use-as-metadata-center: false
+    use-as-config-center: false
+
+  consumer:
+    check: false
+    timeout: 3000
+

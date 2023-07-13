@@ -1,0 +1,33 @@
+server:
+  port: 9803
+
+spring:
+  application:
+    name: sms-service
+  cloud:
+    stream:
+      rocketmq:
+        binder:
+          name-server: 192.168.2.200:9876
+          group: login-code
+      bindings:
+        phoneCodeSmsConsumer-in-0:
+          destination: login-auth-sms-code
+          content-type: application/json
+          group: login-code
+          consumer:
+            concurrency: 20
+            max-attempts: 1
+      function:
+        definition: phoneCodeSmsConsumer
+
+    nacos:
+      server-addr: localhost:8848
+      discovery:
+        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+      config:
+        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        file-extension: yaml
+        extension-configs:
+          - data-id: sms-dev.yaml
+            refresh: true

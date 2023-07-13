@@ -16,6 +16,7 @@
         <module>gateway</module>
         <module>common</module>
         <module>auth</module>
+        <module>service</module>
     </modules>
 
     <properties>
@@ -32,13 +33,18 @@
         <curator.version>4.0.1</curator.version>
         <swagger.version>3.0.0</swagger.version>
         <knife4j.version>4.0.0</knife4j.version>
-        <dev33-sa-token.version>1.34.0</dev33-sa-token.version>
+        <dev33-sa-token.version>1.35.0.RC</dev33-sa-token.version>
         <guava.version>32.0.1-jre</guava.version>
         <mybatis-plus-starter.version>3.5.3.1</mybatis-plus-starter.version>
         <mysql-connector.version>8.0.33</mysql-connector.version>
         <fastjson.version>2.0.33</fastjson.version>
         <common-lang.version>3.12.0</common-lang.version>
         <lombok.version>1.18.28</lombok.version>
+        <dubbo.version>3.2.3</dubbo.version>
+        <jwt.version>0.11.5</jwt.version>
+        <rocketmq.version>2.2.3</rocketmq.version>
+        <bcrypt.version>0.10.2</bcrypt.version>
+        <apache-redis-pool.version>2.11.1</apache-redis-pool.version>
     </properties>
 
     <dependencyManagement>
@@ -51,18 +57,22 @@
             </dependency>
             <dependency>
                 <groupId>com.acvount</groupId>
-                <artifactId>common-sa-token-starter</artifactId>
+                <artifactId>common-service-web-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.acvount</groupId>
+                <artifactId>common-mybatis-plus-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <!-- common models end -->
-
-
             <!-- dubbo starter -->
             <dependency>
-                <groupId>com.alibaba.cloud</groupId>
-                <artifactId>spring-cloud-starter-dubbo</artifactId>
-                <version>${spring-cloud-alibaba.version}</version>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${dubbo.version}</version>
             </dependency>
+
             <!-- nacos starter -->
             <dependency>
                 <groupId>com.alibaba.cloud</groupId>
@@ -98,8 +108,8 @@
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
-                <optional>true</optional>
                 <version>${lombok.version}</version>
+                <scope>provided</scope>
             </dependency>
 
             <!--spring cloud 依赖-->
@@ -131,6 +141,19 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava.version}</version>
+            </dependency>
+
+            <!--rocketmq -->
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-spring-boot-starter</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-pool2</artifactId>
+                <version>${apache-redis-pool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
