@@ -21,7 +21,12 @@ public class SaTokenConfigure {
 
     private static final String[] EXCLUDE_PATH = {
             "/auth-service/login/phone/checkCode",
-            "/auth-service/login/phone/sendCode"
+            "/auth-service/login/phone/sendCode",
+            "/doc.html",
+            "/swagger-resources",
+            "/webjars/**",
+            "/v3/api-docs/swagger-config",
+            "/**/v3/api-docs"
     };
 
     @Bean
@@ -30,6 +35,7 @@ public class SaTokenConfigure {
                 .addInclude(INCLUDE_PATH)
                 .addExclude(EXCLUDE_PATH)
                 .setAuth(obj -> {
+
                     SaRouter.match("/**", StpUtil::checkLogin);
                     SaRouter.match("/user-service/**", r -> StpUtil.checkPermission("user"));
                 })

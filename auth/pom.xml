@@ -82,6 +82,10 @@
             <groupId>com.acvount</groupId>
             <artifactId>common-mybatis-plus-starter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
