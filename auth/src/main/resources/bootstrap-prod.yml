@@ -1,0 +1,49 @@
+spring:
+  cloud:
+    nacos:
+      server-addr: 172.17.203.165:8848
+      username: nacos
+      password: acfan0523@gmail
+      discovery:
+        group: prod
+        namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
+      config:
+        group: prod
+        namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
+        file-extension: yaml
+        extension-configs:
+          - data-id: auth-prod.yaml
+            group: auth
+            refresh: true
+
+          - data-id: common-mybatis-plus.yaml
+            group: common
+            refresh: true
+
+          - data-id: common-redis.yaml
+            group: common
+            refresh: true
+dubbo:
+  application:
+    name: auth-dubbo-service
+    metadata-type: local
+    qosEnable: false
+
+  protocol:
+    name: dubbo
+    port: -1
+
+  registry:
+    address: nacos://172.17.203.165:8848
+    username: nacos
+    password: acfan0523@gmail
+    group: prod
+    parameters:
+      "namespace": 84c25bdd-658c-4cb8-acf3-7031e154d5aa
+    check: false
+    register-mode: interface
+    use-as-metadata-center: false
+
+  consumer:
+    check: false
+    timeout: 3000

@@ -32,18 +32,9 @@ spring:
           - data-id: common-mybatisplus.yaml
             refresh: true
 
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
-
 dubbo:
   application:
-    name: auth-service
+    name: auth-service-dubbo
     metadata-type: local
     qosEnable: false
 
@@ -55,7 +46,7 @@ dubbo:
     address: nacos://localhost:8848
     username: nacos
     password: cc1234567.
-    group: DEFAULT_GROUP
+    group: prod
     parameters:
       "namespace": f5d53f37-d171-43c7-9b77-01c64eeae769
     check: false

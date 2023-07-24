@@ -23,7 +23,7 @@ public class RegisterService {
     @Resource
     private SnowflakeIdGenerator snowflakeIdGenerator;
 
-    @DubboReference
+    @DubboReference()
     @SuppressWarnings("unused")
     private UserService userService;
 
