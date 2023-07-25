@@ -13,8 +13,8 @@
         <module>sms</module>
         <module>user</module>
         <module>server</module>
-        <module>game-server-log-listener-service</module>
         <module>item</module>
+        <module>game-server-log-service</module>
     </modules>
     <artifactId>service</artifactId>
 
