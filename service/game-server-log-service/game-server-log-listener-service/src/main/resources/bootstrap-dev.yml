@@ -1,0 +1,45 @@
+server:
+  port: 9702
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: server-log-listener-service
+
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://127.0.0.1:3306/fan_shop_server?useUnicode=true&characterEncoding=utf8&zeroDateTimeBehavior=convertToNull&useSSL=true&serverTimezone=GMT%2B8
+    username: root
+    password: 123456
+
+  cloud:
+    stream:
+      rocketmq:
+        binder:
+          name-server: 8.140.155.54:9876;8.140.155.54:9877
+    nacos:
+      server-addr: localhost:8848
+      username: nacos
+      password: cc1234567.
+      discovery:
+        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+      config:
+        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        file-extension: yaml
+        extension-configs:
+          - data-id: common-dubbo-dev.yaml
+            refresh: true
+            group: DEFAULT_GROUP
+
+          - data-id: common-redis-dev.yaml
+            refresh: true
+            group: DEFAULT_GROUP
+
+          - data-id: common-mybatisplus-dev.yaml
+            refresh: true
+            group: DEFAULT_GROUP
+logging:
+  level:
+    root: info
+    com.acvount: info

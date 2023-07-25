@@ -46,6 +46,7 @@
         <bcrypt.version>0.10.2</bcrypt.version>
         <apache-redis-pool.version>2.11.1</apache-redis-pool.version>
         <springdoc.version>2.1.0</springdoc.version>
+        <redison.version>3.23.1</redison.version>
     </properties>
 
     <dependencyManagement>
@@ -161,6 +162,12 @@
                 <groupId>org.springdoc</groupId>
                 <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
                 <version>${springdoc.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.redisson</groupId>
+                <artifactId>redisson</artifactId>
+                <version>${redison.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
