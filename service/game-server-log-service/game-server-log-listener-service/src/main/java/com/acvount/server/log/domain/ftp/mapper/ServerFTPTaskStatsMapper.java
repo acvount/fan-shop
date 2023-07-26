@@ -15,7 +15,7 @@ import org.apache.ibatis.annotations.Update;
 @Mapper
 public interface ServerFTPTaskStatsMapper extends BaseMapper<ServerFTPTaskStats> {
 
-    @Update("update server_enabled_ftp_log_listener set task_status = 5 where ftp_id = #{id}")
-    void passwordError(@Param("id") Long id);
+    @Update("update server_enabled_ftp_log_listener set task_status = #{state} where ftp_id = #{id}")
+    void changeStateAndUnTask(@Param("id") Long id,@Param("state")Integer state);
 
 }

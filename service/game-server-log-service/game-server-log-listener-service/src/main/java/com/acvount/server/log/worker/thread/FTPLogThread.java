@@ -10,7 +10,6 @@ import com.acvount.server.log.domain.ftp.mapper.ServerFTPTaskStatsMapper;
 import com.acvount.server.log.dto.LogMessage;
 import com.acvount.server.log.worker.thread.dto.FTPMetadata;
 import com.acvount.server.log.worker.thread.dto.FileMD5DTO;
-import com.alibaba.fastjson.JSON;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -31,9 +30,9 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -54,9 +53,12 @@ public class FTPLogThread implements Runnable {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
     private final static String RemoteFolderPath = "/SCUM/Saved/SaveFiles/Logs/";
     private FTPClient ftpClient;
-    private volatile boolean LOGIN_FLAG = true;
+    private volatile boolean BEGIN_FLAG = true;
 
     private volatile StreamBridge streamBridge;
+
+    private volatile Integer MAX_ERROR_COUNT = 5;
+    private volatile AtomicInteger errorCount = new AtomicInteger();
 
 
     public FTPLogThread(ServerFTP serverFTP,
@@ -73,7 +75,7 @@ public class FTPLogThread implements Runnable {
     public void run() {
         FTPMetadata ftpMetadata = curFTPCacheOrDBStats();
         FTPClient ftpClient = getFtpClient();
-        if (LOGIN_FLAG) {
+        if (BEGIN_FLAG) {
             boolean runFlag = ftpMetadata == null ? start(ftpClient) : start(ftpClient, ftpMetadata);
             try {
                 ftpClient.disconnect();
@@ -85,22 +87,39 @@ public class FTPLogThread implements Runnable {
 
     }
 
+    private void cancelTaskByState(int state) {
+        BEGIN_FLAG = false;
+        serverFTPTaskStatsMapper.changeStateAndUnTask(serverFTP.getId(), state);
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.registerModule(new JavaTimeModule());
+        try {
+            redisTemplate.opsForList().remove(IDUtils.programID() + RedisCacheConsts.TaskSuffix, 1, mapper.writeValueAsString(serverFTP));
+        } catch (JsonProcessingException e) {
+            log.error("json processing exception : {}", e.getMessage());
+        }
+    }
+
+    private void checkConnectErrorCount() {
+        if (errorCount.getAndIncrement() >= MAX_ERROR_COUNT) {
+            cancelTaskByState(6);
+            throw new RuntimeException("is max connect count");
+        }
+    }
+
     private FTPClient getFtpClient() {
         FTPClient ftpClient = new FTPClient();
         try {
             ftpClient.connect(serverFTP.getIp(), serverFTP.getPort());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            checkConnectErrorCount();
+            return getFtpClient();
         }
+        errorCount = new AtomicInteger();
         try {
             boolean login = ftpClient.login(serverFTP.getUsername(), serverFTP.getPassword());
             if (!login) {
                 ftpClient.logout();
-                LOGIN_FLAG = false;
-                serverFTPTaskStatsMapper.passwordError(serverFTP.getId());
-                ObjectMapper mapper = new ObjectMapper();
-                mapper.registerModule(new JavaTimeModule());
-                redisTemplate.opsForList().remove(IDUtils.programID() + RedisCacheConsts.TaskSuffix, 1, mapper.writeValueAsString(serverFTP));
+                cancelTaskByState(5);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -234,8 +253,8 @@ public class FTPLogThread implements Runnable {
                 InputStream inputStream = ftpClient.retrieveFileStream(RemoteFolderPath + file.getName());
                 String content = readFTPFileByStart(inputStream, start);
                 if (content != null) {
-                    streamBridge.send(RocketMQConsts.GameLogTopic,assembleMessageBody(fileMD5DTO.getType(),content));
-                    log.info("FTP: {} 消费一次消息成功 File :{}", serverFTP.getIp(),file.getName());
+                    streamBridge.send(RocketMQConsts.GameLogTopic, assembleMessageBody(fileMD5DTO.getType(), content));
+                    log.info("FTP: {} 消费一次消息成功 File :{}", serverFTP.getIp(), file.getName());
                 }
             }
         } catch (IOException e) {
@@ -317,7 +336,7 @@ public class FTPLogThread implements Runnable {
         return RedisCacheConsts.FTP_Metadata_Prefix + serverFTP.getId();
     }
 
-    private Message<LogMessage> assembleMessageBody(String type,String content){
+    private Message<LogMessage> assembleMessageBody(String type, String content) {
         LogMessage logMessage = new LogMessage();
         logMessage.setContent(content);
         logMessage.setType(type);
