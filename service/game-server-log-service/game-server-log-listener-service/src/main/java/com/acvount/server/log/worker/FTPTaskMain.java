@@ -5,6 +5,7 @@ import com.acvount.server.log.consts.RedisCacheConsts;
 import com.acvount.server.log.domain.ftp.entity.ServerFTP;
 import com.acvount.server.log.domain.ftp.mapper.ServerFTPTaskStatsMapper;
 import com.acvount.server.log.worker.thread.FTPLogThread;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.Resource;
@@ -15,6 +16,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -31,7 +33,11 @@ public class FTPTaskMain {
     private static final int MAX_THREAD_POOL_SIZE = 5;
     private static final int BATCH_SIZE = 5;
 
+    @SuppressWarnings("all")
     private ExecutorService threadPool;
+    ;
+    @SuppressWarnings("all")
+    private HashSet<String> ftpServersInProgress = new HashSet<>();
 
     @Resource
     private RedisTemplate<String, String> redisTemplate;
@@ -46,11 +52,9 @@ public class FTPTaskMain {
     //获取自身任务并分配线程 一秒一次，
     @Scheduled(fixedRate = 1000L)
     private void assignThread() {
-        if (threadPool != null && !threadPool.isTerminated()) {
-            // 上一个线程未结束，暂不执行新任务
-            return;
+        if (threadPool == null || threadPool.isTerminated() || threadPool.isShutdown()) {
+            threadPool = Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
         }
-        threadPool = Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
         String curTaskRedisKey = getCurTaskRedisKey();
         Long size = redisTemplate.opsForList().size(curTaskRedisKey);
         if (size == null || size.intValue() == 0) {
@@ -67,10 +71,25 @@ public class FTPTaskMain {
                 break;
             }
             for (String ftpServer : batch) {
-                try {
-                    threadPool.execute(new FTPLogThread(mapper.readValue(ftpServer, ServerFTP.class), redisTemplate, serverFTPTaskStatsMapper, streamBridge));
-                } catch (Exception e) {
-                    log.error("commit task error {}", e.getMessage());
+                // 检查ftpServer是否已经在处理中，如果是，则跳过
+                if (!ftpServersInProgress.contains(ftpServer)) {
+                    try {
+                        // 将ftpServer添加到HashSet中标记为处理中
+                        ftpServersInProgress.add(ftpServer);
+                        threadPool.execute(() -> {
+                            FTPLogThread ftpLogThread = null;
+                            try {
+                                ftpLogThread = new FTPLogThread(mapper.readValue(ftpServer, ServerFTP.class), redisTemplate, serverFTPTaskStatsMapper, streamBridge);
+                            } catch (JsonProcessingException e) {
+                                throw new RuntimeException(e);
+                            }
+                            ftpLogThread.run();
+                            // 在任务执行完成后，从HashSet中移除ftpServer
+                            removeInProgressFtpServer(ftpServer);
+                        });
+                    } catch (Exception e) {
+                        log.error("commit task error {}", e.getMessage());
+                    }
                 }
             }
             index++;
@@ -78,12 +97,8 @@ public class FTPTaskMain {
         threadPool.shutdown();
     }
 
-
-    private ExecutorService createThreadPool(Long currentTaskCount) {
-        int threadPoolSize = currentTaskCount.intValue() / 2;
-        threadPoolSize = Math.min(threadPoolSize, MAX_THREAD_POOL_SIZE);
-        threadPoolSize = Math.max(threadPoolSize, 1);
-        return Executors.newFixedThreadPool(threadPoolSize);
+    private void removeInProgressFtpServer(String ftpServer) {
+        ftpServersInProgress.remove(ftpServer);
     }
 
     private String getCurTaskRedisKey() {
