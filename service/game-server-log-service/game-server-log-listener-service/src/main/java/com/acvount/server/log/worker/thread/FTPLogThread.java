@@ -58,7 +58,9 @@ public class FTPLogThread implements Runnable {
     private volatile StreamBridge streamBridge;
 
     private volatile Integer MAX_ERROR_COUNT = 5;
-    private volatile AtomicInteger errorCount = new AtomicInteger();
+    private
+
+    AtomicInteger errorCount = new AtomicInteger();
 
 
     public FTPLogThread(ServerFTP serverFTP,
@@ -100,11 +102,16 @@ public class FTPLogThread implements Runnable {
         log.info("task canceled id:{} ip:{} state:{}", IDUtils.programID(), serverFTP.getIp(), state);
     }
 
-    private void checkConnectErrorCount() {
-        if (errorCount.getAndIncrement() >= MAX_ERROR_COUNT) {
+    private boolean checkConnectErrorCount() {
+        int andIncrement = errorCount.getAndIncrement();
+        log.error("connect error current count {} max count {}", andIncrement, MAX_ERROR_COUNT);
+        if (andIncrement >= MAX_ERROR_COUNT) {
             cancelTaskByState(6);
-            throw new RuntimeException("is max connect count");
+            log.error("is max connect count IP:{}", serverFTP.getIp());
+            Thread.currentThread().interrupt();
+            return false;
         }
+        return true;
     }
 
     private FTPClient getFtpClient() {
@@ -112,8 +119,10 @@ public class FTPLogThread implements Runnable {
         try {
             ftpClient.connect(serverFTP.getIp(), serverFTP.getPort());
         } catch (IOException e) {
-            checkConnectErrorCount();
-            return getFtpClient();
+            if (checkConnectErrorCount()) {
+                return getFtpClient();
+            }
+            return null;
         }
         errorCount = new AtomicInteger();
         try {
