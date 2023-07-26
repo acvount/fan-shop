@@ -97,6 +97,7 @@ public class FTPLogThread implements Runnable {
         } catch (JsonProcessingException e) {
             log.error("json processing exception : {}", e.getMessage());
         }
+        log.info("task canceled id:{} ip:{} state:{}", IDUtils.programID(), serverFTP.getIp(), state);
     }
 
     private void checkConnectErrorCount() {
