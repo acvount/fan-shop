@@ -34,9 +34,6 @@ public class FTPTaskMain {
     private static final int BATCH_SIZE = 5;
 
     @SuppressWarnings("all")
-    private ExecutorService threadPool;
-    ;
-    @SuppressWarnings("all")
     private HashSet<String> ftpServersInProgress = new HashSet<>();
 
     @Resource
@@ -52,9 +49,7 @@ public class FTPTaskMain {
     //获取自身任务并分配线程 一秒一次，
     @Scheduled(fixedRate = 1000L)
     private void assignThread() {
-        if (threadPool == null || threadPool.isTerminated() || threadPool.isShutdown()) {
-            threadPool = Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
-        }
+        ExecutorService threadPool = Executors.newFixedThreadPool(MAX_THREAD_POOL_SIZE);
         String curTaskRedisKey = getCurTaskRedisKey();
         Long size = redisTemplate.opsForList().size(curTaskRedisKey);
         if (size == null || size.intValue() == 0) {
