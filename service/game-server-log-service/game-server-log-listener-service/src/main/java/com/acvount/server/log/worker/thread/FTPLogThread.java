@@ -2,11 +2,11 @@ package com.acvount.server.log.worker.thread;
 
 import com.acvount.common.core.id.IDUtils;
 import com.acvount.common.core.security.CalculateUtils;
-import com.acvount.server.log.consts.RedisCacheConsts;
-import com.acvount.server.log.consts.RocketMQConsts;
 import com.acvount.server.log.api.domain.ftp.entity.ServerFTP;
 import com.acvount.server.log.api.domain.ftp.entity.ServerFTPTaskStats;
 import com.acvount.server.log.api.domain.ftp.mapper.ServerFTPTaskStatsMapper;
+import com.acvount.server.log.consts.RedisCacheConsts;
+import com.acvount.server.log.consts.RocketMQConsts;
 import com.acvount.server.log.dto.LogMessage;
 import com.acvount.server.log.worker.thread.dto.FTPMetadata;
 import com.acvount.server.log.worker.thread.dto.FileMD5DTO;
@@ -19,6 +19,8 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
@@ -31,7 +33,10 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
@@ -62,28 +67,41 @@ public class FTPLogThread implements Runnable {
 
     private AtomicInteger errorCount = new AtomicInteger();
 
+    private final RLock rLock;
 
     public FTPLogThread(ServerFTP serverFTP,
                         RedisTemplate<String, String> redisTemplate,
                         ServerFTPTaskStatsMapper serverFTPTaskStatsMapper,
-                        StreamBridge streamBridge) {
+                        StreamBridge streamBridge,
+                        RedissonClient redissonClient) {
         this.serverFTP = serverFTP;
         this.redisTemplate = redisTemplate;
         this.serverFTPTaskStatsMapper = serverFTPTaskStatsMapper;
         this.streamBridge = streamBridge;
+        rLock = redissonClient.getLock(CalculateUtils.md5(serverFTP));
     }
 
     @Override
     public void run() {
-        FTPMetadata ftpMetadata = curFTPCacheOrDBStats();
-        FTPClient ftpClient = getFtpClient();
-        if (BEGIN_FLAG && ftpClient != null) {
-            start(ftpClient, ftpMetadata);
-            try {
-                ftpClient.disconnect();
-            } catch (Exception e) {
-                e.printStackTrace();
-                log.info(e.getMessage());
+        try {
+            if (rLock.tryLock(10, TimeUnit.SECONDS)) {
+                FTPMetadata ftpMetadata = curFTPCacheOrDBStats();
+                FTPClient ftpClient = getFtpClient();
+                if (BEGIN_FLAG && ftpClient != null) {
+                    start(ftpClient, ftpMetadata);
+                    try {
+                        ftpClient.disconnect();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        log.info(e.getMessage());
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("run task fail {}", e.getMessage());
+        } finally {
+            if (rLock.isHeldByCurrentThread()) {
+                rLock.unlock();
             }
         }
 
@@ -191,6 +209,7 @@ public class FTPLogThread implements Runnable {
         FTPFile[] ftpFiles;
         try {
             ftpFiles = ftpClient.listFiles(RemoteFolderPath);
+            log.debug("获取到文件列表：{}.length", ftpFiles.length);
         } catch (IOException e) {
             if (e instanceof SocketTimeoutException) {
                 getFtpClient();

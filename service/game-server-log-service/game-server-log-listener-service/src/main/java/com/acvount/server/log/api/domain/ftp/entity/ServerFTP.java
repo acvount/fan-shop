@@ -3,6 +3,7 @@ package com.acvount.server.log.api.domain.ftp.entity;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 
 @Data
 @TableName("server_ftp")
-public class ServerFTP {
+public class ServerFTP implements Serializable {
     private Long id;
     private Long serverId;
     private Long ownerId;

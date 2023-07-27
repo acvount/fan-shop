@@ -24,10 +24,8 @@ public class TestPaster {
     private EconomyStage economyStage;
 
 
-
-
     @Test
-    public void testEconomyBeforeStage(){
+    public void testEconomyStage() {
 
         LogMessage logMessage = new LogMessage();
 
@@ -38,16 +36,8 @@ public class TestPaster {
                 "\n2023.07.25-14.16.51: [Trade] Before selling tradeables to trader Z_3_Trader, player Mi(76561198449849129) had 11063 cash, 141896 account balance and 0 gold and trader had 100000 funds." +
                 "\n2023.07.25-14.17.00: [Trade] Before selling tradeables to trader Z_3_Trader, player Mi(76561198449849129) had 11063 cash, 142392 account balance and 0 gold and trader had 100000 funds." +
                 "\n2023.07.25-14.17.00: [Trade] Before selling tradeables to trader Z_3_Armory, player 比奇堡粉红星星(76561198376789206) had 8469 cash, 244680 account balance and 5 gold and trader had 100000 funds." +
-                "\n2023.07.25-14.17.21: [Trade] Before purchasing tradeales from trader Z_3_Armory, player 8g272r(76561199339471681) had 0 cash, 12391 account balance and 0 gold and trader had 100000 funds.";
-        logMessage.setContent(content);
-        logMessage.setType("economy");
-        economyStage.consumer(logMessage);
-    }
-    @Test
-    public void testEconomyAfterStage(){
-        LogMessage logMessage = new LogMessage();
-        logMessage.setServerId(1L);
-        String content = "\n2023.07.25-14.16.07: [Trade] After tradeable sale to trader Z_3_Armory, player 比奇堡粉红星星(76561198376789206) has 5710 cash, 244680 account balance and 5 gold and trader has 100000 funds." +
+                "\n2023.07.25-14.17.21: [Trade] Before purchasing tradeales from trader Z_3_Armory, player 8g272r(76561199339471681) had 0 cash, 12391 account balance and 0 gold and trader had 100000 funds."+
+                "\n2023.07.25-14.16.07: [Trade] After tradeable sale to trader Z_3_Armory, player 比奇堡粉红星星(76561198376789206) has 5710 cash, 244680 account balance and 5 gold and trader has 100000 funds." +
                 "\n2023.07.25-14.16.42: [Trade] After tradeable sale to trader Z_3_Hospital, player yukikiki(76561198301050685) has 0 cash, 226197 account balance and 0 gold and trader has 100000 funds." +
                 "\n2023.07.25-14.16.50: [Trade] After tradeable sale to trader Z_3_Armory, player 比奇堡粉红星星(76561198376789206) has 8469 cash, 244680 account balance and 5 gold and trader has 100000 funds." +
                 "\n2023.07.25-14.16.51: [Trade] After tradeable sale to trader Z_3_Trader, player Mi(76561198449849129) has 11063 cash, 142392 account balance and 0 gold and trader has 100000 funds." +
@@ -58,7 +48,6 @@ public class TestPaster {
         logMessage.setType("economy");
         economyStage.consumer(logMessage);
     }
-
     /*
     *       id 1
         trader Armory
