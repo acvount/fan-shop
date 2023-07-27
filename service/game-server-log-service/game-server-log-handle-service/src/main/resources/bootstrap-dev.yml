@@ -6,7 +6,7 @@ spring:
     name: server-log-handle-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://127.0.0.1:3306/fan_shop_log?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://192.168.2.100:3306/fan_shop_log?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
     username: root
     password: 123456
   cloud:
@@ -27,7 +27,7 @@ spring:
         definition: handleLogMessage
 
     nacos:
-      server-addr: localhost:8848
+      server-addr: 192.168.2.100:8848
       discovery:
         namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
       config:
