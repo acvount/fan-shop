@@ -67,42 +67,34 @@ public class FTPLogThread implements Runnable {
 
     private AtomicInteger errorCount = new AtomicInteger();
 
-    private final RLock rLock;
 
     public FTPLogThread(ServerFTP serverFTP,
                         RedisTemplate<String, String> redisTemplate,
                         ServerFTPTaskStatsMapper serverFTPTaskStatsMapper,
-                        StreamBridge streamBridge,
-                        RedissonClient redissonClient) {
+                        StreamBridge streamBridge) {
         this.serverFTP = serverFTP;
         this.redisTemplate = redisTemplate;
         this.serverFTPTaskStatsMapper = serverFTPTaskStatsMapper;
         this.streamBridge = streamBridge;
-        rLock = redissonClient.getLock(CalculateUtils.md5(serverFTP));
     }
 
     @Override
     public void run() {
         try {
-            if (rLock.tryLock(10, TimeUnit.SECONDS)) {
-                FTPMetadata ftpMetadata = curFTPCacheOrDBStats();
-                FTPClient ftpClient = getFtpClient();
-                if (BEGIN_FLAG && ftpClient != null) {
-                    start(ftpClient, ftpMetadata);
-                    try {
-                        ftpClient.disconnect();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        log.info(e.getMessage());
-                    }
+            FTPMetadata ftpMetadata = curFTPCacheOrDBStats();
+            FTPClient ftpClient = getFtpClient();
+            if (BEGIN_FLAG && ftpClient != null) {
+                start(ftpClient, ftpMetadata);
+                try {
+                    ftpClient.disconnect();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    log.info(e.getMessage());
                 }
             }
-        } catch (Exception e) {
+        } catch (
+                Exception e) {
             log.error("run task fail {}", e.getMessage());
-        } finally {
-            if (rLock.isHeldByCurrentThread()) {
-                rLock.unlock();
-            }
         }
 
     }
@@ -289,9 +281,14 @@ public class FTPLogThread implements Runnable {
             if (ftpClient.isAvailable()) {
                 InputStream inputStream = ftpClient.retrieveFileStream(RemoteFolderPath + file.getName());
                 String content = readFTPFileByStart(inputStream, start);
+
                 if (content != null) {
-                    streamBridge.send(RocketMQConsts.GameLogTopic, assembleMessageBody(fileMD5DTO.getType(), content));
-                    log.info("FTP: {} 消费一次消息成功 File :{}", serverFTP.getIp(), file.getName());
+                    if (Boolean.FALSE.equals(redisTemplate.hasKey(content))) {
+                        redisTemplate.opsForValue().set(content, "", 5, TimeUnit.MINUTES);
+                        redisTemplate.opsForHash().put(serverFTP.getIp() + "-repeat", content, "");
+                        streamBridge.send(RocketMQConsts.GameLogTopic, assembleMessageBody(fileMD5DTO.getType(), content));
+                        log.info("FTP: {} 消费一次消息成功 File :{}", serverFTP.getIp(), file.getName());
+                    }
                 }
             }
         } catch (IOException e) {

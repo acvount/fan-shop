@@ -37,9 +37,6 @@ public class FTPTaskMain {
     private RedisTemplate<String, String> redisTemplate;
 
     @Resource
-    private RedissonClient redissonClient;
-
-    @Resource
     private ServerFTPTaskStatsMapper serverFTPTaskStatsMapper;
 
     @Resource
@@ -76,7 +73,7 @@ public class FTPTaskMain {
                     // 将ftpServer添加到HashSet中标记为处理中
                     threadPool.execute(() -> {
                         try {
-                            FTPLogThread ftpLogThread = new FTPLogThread(mapper.readValue(ftpServer, ServerFTP.class), redisTemplate, serverFTPTaskStatsMapper, streamBridge, redissonClient);
+                            FTPLogThread ftpLogThread = new FTPLogThread(mapper.readValue(ftpServer, ServerFTP.class), redisTemplate, serverFTPTaskStatsMapper, streamBridge);
                             ftpLogThread.run();
                         } catch (JsonProcessingException e) {
                             log.error("parse error {}", e.getMessage());

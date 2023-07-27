@@ -43,4 +43,4 @@ logging:
   level:
     root: info
     com.acvount: info
-    com.acvount.server.log.worker.thread: info
+    com.acvount.server.log.worker.thread: debug
