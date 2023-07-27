@@ -31,7 +31,7 @@ public class EconomyLog {
     private String afterAccount;
     private String afterGold;
     private String afterTraderMoney;
-    private Integer currentOnlineCount;
+    private Integer currentOnlinePlayer;
     private LocalDateTime logTime;
     private LocalDateTime createTime;
 }

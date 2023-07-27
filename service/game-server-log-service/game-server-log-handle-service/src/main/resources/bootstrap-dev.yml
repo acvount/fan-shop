@@ -16,15 +16,13 @@ spring:
           name-server: 192.168.2.200:9876
           group: game-log-topic
       bindings:
-        phoneCodeSmsConsumer-in-0:
-          destination: login-auth-sms-code
+        logMessageConsumer-in-0:
+          destination: ame-log-topic
           content-type: application/json
           group: game-log-topic
           consumer:
             concurrency: 20
             max-attempts: 1
-      function:
-        definition: handleLogMessage
 
     nacos:
       server-addr: 192.168.2.100:8848

@@ -29,7 +29,7 @@ public class LogListener {
     private LogTypeStageChecker logTypeStageChecker;
 
     @Bean
-    public Function<Flux<Message<LogMessage>>, Mono<Void>> phoneCodeSmsConsumer() {
+    public Function<Flux<Message<LogMessage>>, Mono<Void>> logMessageConsumer() {
         return flux -> flux.map(message -> {
             LogMessage logMessage = message.getPayload();
             LogStage stage = logTypeStageChecker.getStage(logMessage.getType());
