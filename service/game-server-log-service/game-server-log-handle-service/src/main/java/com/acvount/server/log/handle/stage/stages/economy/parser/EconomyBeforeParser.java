@@ -27,7 +27,9 @@ public class EconomyBeforeParser implements EconomyParser {
 
     @Resource
     private LoseLogService loseLogService;
-    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?before (?<type>.*?) tradeables to trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<beforeCash>\\d.*?)cash,.*?(?<beforeAccount>\\d.*?)account.*?(?<beforeGold>\\d).*?(?<beforeTraderMoney>\\d+).";
+
+//    2023.07.25-14.17.21: [trade] before purchasing tradeales from trader z_3_armory, player 8g272r(76561199339471681) had 0 cash, 12391 account balance and 0 gold and trader had 100000 funds.
+    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?before (?<type>.*?) .*? trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<beforeCash>\\d.*?)cash,.*?(?<beforeAccount>\\d.*?)account.*?(?<beforeGold>\\d).*?(?<beforeTraderMoney>\\d+).";
     private static final Pattern logPattern = Pattern.compile(LOG_PATTERN);
 
     @Override
