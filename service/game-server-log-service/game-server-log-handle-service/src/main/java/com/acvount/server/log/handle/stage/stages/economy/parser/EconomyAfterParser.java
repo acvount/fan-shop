@@ -25,8 +25,7 @@ public class EconomyAfterParser implements EconomyParser {
 
     @Resource
     private LoseLogService loseLogService;
-
-    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?tradeable(?<type>.*?)to trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<afterCash>\\d.*?)cash,.*?(?<afterAccount>\\d.*?)account.*?(?<afterGold>\\d).*?(?<afterTraderMoney>\\d+).";
+    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?after tradeable (?<type>\\w+) (to|from) trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<afterCash>\\d.*?)cash,.*?(?<afterAccount>\\d+).*?account.*?(?<afterGold>\\d).*?(?<afterTraderMoney>\\d+).";
     private static final Pattern logPattern = Pattern.compile(LOG_PATTERN);
 
     @Override
