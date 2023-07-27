@@ -2,6 +2,8 @@ package com.acvount.server.log.handle.stage.stages.economy.parser;
 
 import com.acvount.server.log.api.ecnonmy.domain.EconomyLog;
 import com.acvount.server.log.economy.mapper.EconomyLogMapper;
+import com.acvount.server.log.economy.service.EconomyLogService;
+import com.acvount.server.log.lose.service.LoseLogService;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +25,10 @@ import java.util.regex.Pattern;
 public class EconomyAfterParser implements EconomyParser {
 
     @Resource
-    private EconomyLogMapper economyLogMapper;
+    private EconomyLogService economyLogService;
+
+    @Resource
+    private LoseLogService loseLogService;
 
     private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?to trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<afterCash>\\d.*?)cash,.*?(?<afterAccount>\\d.*?)account.*?(?<afterGold>\\d).*?(?<afterTraderMoney>\\d+).";
     private static final Pattern logPattern = Pattern.compile(LOG_PATTERN);
@@ -43,18 +48,10 @@ public class EconomyAfterParser implements EconomyParser {
             economyLog.setAfterGold(matcher.group("afterGold"));
             economyLog.setAfterTraderMoney(matcher.group("afterTraderMoney"));
             economyLog.setServerId(serverId);
-            if (economyLogMapper.selectCount(Wrappers.lambdaQuery(
-                            EconomyLog.class).eq(EconomyLog::getLogTime, economyLog.getLogTime())
-                    .eq(EconomyLog::getServerId, serverId)
-                    .eq(EconomyLog::getTrader, economyLog.getTrader())
-                    .eq(EconomyLog::getRegion, economyLog.getRegion())
-                    .eq(EconomyLog::getPlayerSteamId, economyLog.getPlayerSteamId())
-            ) > 0) {
-                economyLogMapper.updateById(economyLog);
-            } else {
-                economyLogMapper.insert(economyLog);
-            }
+            economyLogService.insertOrUpdate(economyLog);
             log.info("consumer economy after player steam:{} server:{}", economyLog.getPlayerSteamId(), economyLog.getServerId());
+        } else {
+            loseLogService.addLoseLog(serverId, logText, "economy_after");
         }
     }
 
