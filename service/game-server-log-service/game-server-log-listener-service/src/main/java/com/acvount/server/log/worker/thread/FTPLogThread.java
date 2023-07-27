@@ -283,8 +283,8 @@ public class FTPLogThread implements Runnable {
                 String content = readFTPFileByStart(inputStream, start);
 
                 if (content != null) {
-                    if (Boolean.FALSE.equals(redisTemplate.hasKey(content))) {
-                        redisTemplate.opsForValue().set(content, "", 5, TimeUnit.MINUTES);
+                    if (Boolean.FALSE.equals(redisTemplate.hasKey(CalculateUtils.md5(content)))) {
+                        redisTemplate.opsForValue().set(CalculateUtils.md5(content), "repeat", 5, TimeUnit.MINUTES);
                         redisTemplate.opsForHash().put(serverFTP.getIp() + "-repeat", content, "");
                         streamBridge.send(RocketMQConsts.GameLogTopic, assembleMessageBody(fileMD5DTO.getType(), content));
                         log.info("FTP: {} 消费一次消息成功 File :{}", serverFTP.getIp(), file.getName());
