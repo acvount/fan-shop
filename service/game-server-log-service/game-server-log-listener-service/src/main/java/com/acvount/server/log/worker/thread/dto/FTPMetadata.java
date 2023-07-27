@@ -1,6 +1,6 @@
 package com.acvount.server.log.worker.thread.dto;
 
-import com.acvount.server.log.domain.ftp.entity.ServerFTP;
+import com.acvount.server.log.api.domain.ftp.entity.ServerFTP;
 import lombok.Data;
 
 import java.time.LocalDateTime;

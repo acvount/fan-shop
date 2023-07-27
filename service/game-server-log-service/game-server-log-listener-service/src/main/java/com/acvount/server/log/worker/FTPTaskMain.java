@@ -2,8 +2,8 @@ package com.acvount.server.log.worker;
 
 import com.acvount.common.core.id.IDUtils;
 import com.acvount.server.log.consts.RedisCacheConsts;
-import com.acvount.server.log.domain.ftp.entity.ServerFTP;
-import com.acvount.server.log.domain.ftp.mapper.ServerFTPTaskStatsMapper;
+import com.acvount.server.log.api.domain.ftp.entity.ServerFTP;
+import com.acvount.server.log.api.domain.ftp.mapper.ServerFTPTaskStatsMapper;
 import com.acvount.server.log.worker.thread.FTPLogThread;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

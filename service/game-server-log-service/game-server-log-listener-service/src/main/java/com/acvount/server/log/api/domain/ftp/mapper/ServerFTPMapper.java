@@ -1,6 +1,6 @@
-package com.acvount.server.log.domain.ftp.mapper;
+package com.acvount.server.log.api.domain.ftp.mapper;
 
-import com.acvount.server.log.domain.ftp.entity.ServerFTP;
+import com.acvount.server.log.api.domain.ftp.entity.ServerFTP;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

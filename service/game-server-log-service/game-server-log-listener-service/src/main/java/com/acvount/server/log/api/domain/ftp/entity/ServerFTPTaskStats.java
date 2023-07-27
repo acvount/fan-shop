@@ -1,4 +1,4 @@
-package com.acvount.server.log.domain.ftp.entity;
+package com.acvount.server.log.api.domain.ftp.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
