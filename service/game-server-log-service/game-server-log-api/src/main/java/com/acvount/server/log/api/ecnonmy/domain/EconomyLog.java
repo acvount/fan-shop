@@ -20,7 +20,7 @@ public class EconomyLog {
     private Long serverId;
     private String trader;
     private String region;
-    private String playerSteamID;
+    private String playerSteamId;
     private String playerName;
     private String type;
     private String beforeCash;

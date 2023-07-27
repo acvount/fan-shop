@@ -25,31 +25,36 @@ public class EconomyAfterParser implements EconomyParser {
     @Resource
     private EconomyLogMapper economyLogMapper;
 
-    private static final String LOG_PATTERN = "(\\d{4}\\.\\d{2}\\.\\d{2}-\\d{2}\\.\\d{2}\\.\\d{2}): \\[trade\\] .* after tradeable sale to trader (?<trader>.*?), player (?<playerName>.*?)\\((?<playerSteamID>\\d+)\\) .* has (?<afterCash>\\d+) cash, (?<afterAccount>\\d+) account balance and (?<afterGold>\\d+) gold and trader has (?<afterTraderMoney>\\d+) funds\\.";
+    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?to trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<afterCash>\\d.*?)cash,.*?(?<afterAccount>\\d.*?)account.*?(?<afterGold>\\d).*?(?<afterTraderMoney>\\d+).";
     private static final Pattern logPattern = Pattern.compile(LOG_PATTERN);
 
     @Override
     public void consumer(String logText, Long serverId) {
-        System.out.println(logText);
         Matcher matcher = logPattern.matcher(logText);
         if (matcher.find()) {
             EconomyLog economyLog = new EconomyLog();
             economyLog.setLogTime(parseLogTime(matcher.group(1)));
             economyLog.setTrader(matcher.group("trader"));
+            economyLog.setRegion(matcher.group("region"));
             economyLog.setPlayerName(matcher.group("playerName"));
-            economyLog.setPlayerSteamID(matcher.group("playerSteamID"));
+            economyLog.setPlayerSteamId(matcher.group("playerSteamID"));
             economyLog.setAfterCash(matcher.group("afterCash"));
             economyLog.setAfterAccount(matcher.group("afterAccount"));
             economyLog.setAfterGold(matcher.group("afterGold"));
             economyLog.setAfterTraderMoney(matcher.group("afterTraderMoney"));
-            if (economyLogMapper.selectCount(Wrappers.lambdaQuery(EconomyLog.class)
-                    .eq(EconomyLog::getLogTime, economyLog.getLogTime())
-                    .eq(EconomyLog::getPlayerSteamID, economyLog.getPlayerSteamID())) > 0) {
+            economyLog.setServerId(serverId);
+            if (economyLogMapper.selectCount(Wrappers.lambdaQuery(
+                            EconomyLog.class).eq(EconomyLog::getLogTime, economyLog.getLogTime())
+                    .eq(EconomyLog::getServerId, serverId)
+                    .eq(EconomyLog::getTrader, economyLog.getTrader())
+                    .eq(EconomyLog::getRegion, economyLog.getRegion())
+                    .eq(EconomyLog::getPlayerSteamId, economyLog.getPlayerSteamId())
+            ) > 0) {
                 economyLogMapper.updateById(economyLog);
             } else {
                 economyLogMapper.insert(economyLog);
             }
-            log.info("consumer economy after player steam:{} server:{}", economyLog.getPlayerSteamID(), economyLog.getServerId());
+            log.info("consumer economy after player steam:{} server:{}", economyLog.getPlayerSteamId(), economyLog.getServerId());
         }
     }
 
