@@ -27,6 +27,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -55,12 +56,11 @@ public class FTPLogThread implements Runnable {
     private FTPClient ftpClient;
     private volatile boolean BEGIN_FLAG = true;
 
-    private volatile StreamBridge streamBridge;
+    private final StreamBridge streamBridge;
 
-    private volatile Integer MAX_ERROR_COUNT = 5;
-    private
+    private final static Integer MAX_ERROR_COUNT = 5;
 
-    AtomicInteger errorCount = new AtomicInteger();
+    private AtomicInteger errorCount = new AtomicInteger();
 
 
     public FTPLogThread(ServerFTP serverFTP,
@@ -77,8 +77,8 @@ public class FTPLogThread implements Runnable {
     public void run() {
         FTPMetadata ftpMetadata = curFTPCacheOrDBStats();
         FTPClient ftpClient = getFtpClient();
-        if (BEGIN_FLAG) {
-            boolean runFlag = ftpMetadata == null ? start(ftpClient) : start(ftpClient, ftpMetadata);
+        if (BEGIN_FLAG && ftpClient != null) {
+            start(ftpClient, ftpMetadata);
             try {
                 ftpClient.disconnect();
             } catch (Exception e) {
@@ -183,13 +183,21 @@ public class FTPLogThread implements Runnable {
     }
 
     private boolean start(FTPClient ftpClient, FTPMetadata ftpMetadata) {
+        if (ftpMetadata == null) {
+            return start(ftpClient);
+        }
         log.debug("服务器：「{}」获取到任务元数据 线程ID:「{}」", serverFTP.getIp(), ftpMetadata.getThreadId());
         Map<String, FileMD5DTO> fileTypes = ftpMetadata.getFileTypes();
         FTPFile[] ftpFiles;
         try {
             ftpFiles = ftpClient.listFiles(RemoteFolderPath);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            if (e instanceof SocketTimeoutException) {
+                getFtpClient();
+                return start(this.ftpClient, ftpMetadata);
+            } else {
+                throw new RuntimeException(e);
+            }
         }
         Map<String, List<FTPFile>> typeToFileListMap = Arrays.stream(ftpFiles).filter(e -> (e.getSize() > 98))
                 .collect(Collectors.groupingBy(
