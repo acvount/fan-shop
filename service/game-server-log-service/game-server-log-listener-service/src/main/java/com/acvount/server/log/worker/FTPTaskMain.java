@@ -6,7 +6,6 @@ import com.acvount.server.log.api.domain.ftp.mapper.ServerEnabledFtpLogListenerM
 import com.acvount.server.log.api.domain.ftp.mapper.ServerFTPTaskStatsMapper;
 import com.acvount.server.log.consts.RedisCacheConsts;
 import com.acvount.server.log.worker.thread.FTPLogThread;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.Resource;
