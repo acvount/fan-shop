@@ -16,6 +16,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @SpringBootApplication
 public class ServerLogListenerApplication {
     public static void main(String[] args) {
-        SpringApplication.run(ServerLogListenerApplication.class,args);
+        SpringApplication.run(ServerLogListenerApplication.class, args);
     }
 }

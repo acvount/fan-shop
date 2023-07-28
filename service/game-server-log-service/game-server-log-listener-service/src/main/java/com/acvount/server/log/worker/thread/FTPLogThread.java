@@ -92,8 +92,8 @@ public class FTPLogThread implements Runnable {
                     log.info(e.getMessage());
                 }
             }
-        } catch (
-                Exception e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             log.error("run task fail {}", e.getMessage());
         }
 
@@ -174,7 +174,7 @@ public class FTPLogThread implements Runnable {
         FileMD5DTO fileMD5DTO = new FileMD5DTO();
         fileMD5DTO.setType(type);
         fileMD5DTO.setLastFileName(type + "_" + formatter.format(localDateTime) + ".log");
-        fileMD5DTO.setLastFileMd5("");
+        fileMD5DTO.setLastFileMd5("-");
         fileMD5DTO.setLastLength(0L);
         fileMD5DTO.setLastTime(localDateTime);
         ServerFTPTaskStats serverFTPTaskStats = new ServerFTPTaskStats();
@@ -222,7 +222,7 @@ public class FTPLogThread implements Runnable {
                 FTPFile lastFile = getLastFile(v);
                 if (lastFile != null) {
                     fileMD5DTO.setLastFileName(lastFile.getName());
-                    fileMD5DTO.setLastFileMd5(CalculateUtils.md5(lastFile));
+                    fileMD5DTO.setLastFileMd5("-");
                     fileMD5DTO.setLastTime(LocalDateTime.now());
                     fileMD5DTO.setType(k);
                     fileMD5DTO.setLastLength(lastFile.getSize());

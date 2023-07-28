@@ -10,7 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RedissonClient;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -86,7 +85,6 @@ public class FTPTaskMain {
             }
             index++;
         } while (true);
-        threadPool.shutdown();
     }
 
     private String getCurTaskRedisKey() {
