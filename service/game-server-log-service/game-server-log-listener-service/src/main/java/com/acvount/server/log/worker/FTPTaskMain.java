@@ -2,6 +2,7 @@ package com.acvount.server.log.worker;
 
 import com.acvount.common.core.id.IDUtils;
 import com.acvount.server.log.api.domain.ftp.entity.ServerFTP;
+import com.acvount.server.log.api.domain.ftp.mapper.ServerEnabledFtpLogListenerMapper;
 import com.acvount.server.log.api.domain.ftp.mapper.ServerFTPTaskStatsMapper;
 import com.acvount.server.log.consts.RedisCacheConsts;
 import com.acvount.server.log.worker.thread.FTPLogThread;
@@ -39,6 +40,9 @@ public class FTPTaskMain {
     private ServerFTPTaskStatsMapper serverFTPTaskStatsMapper;
 
     @Resource
+    private ServerEnabledFtpLogListenerMapper serverEnabledFtpLogListenerMapper;
+
+    @Resource
     private StreamBridge streamBridge;
 
     private ExecutorService threadPool;
@@ -69,15 +73,15 @@ public class FTPTaskMain {
             for (String ftpServer : batch) {
                 // 检查ftpServer是否已经在处理中，如果是，则跳过
                 try {
+                    ServerFTP serverFTP = mapper.readValue(ftpServer, ServerFTP.class);
+                    if (!serverEnabledFtpLogListenerMapper.isStarted(serverFTP.getId())) {
+                        redisTemplate.opsForList().remove(RedisCacheConsts.ServerListKey, 1, ftpServer);
+                        break;
+                    }
                     // 将ftpServer添加到HashSet中标记为处理中
                     threadPool.execute(() -> {
-                        try {
-                            FTPLogThread ftpLogThread = new FTPLogThread(mapper.readValue(ftpServer, ServerFTP.class), redisTemplate, serverFTPTaskStatsMapper, streamBridge);
-                            ftpLogThread.run();
-                        } catch (JsonProcessingException e) {
-                            log.error("parse error {}", e.getMessage());
-                        }
-
+                        FTPLogThread ftpLogThread = new FTPLogThread(serverFTP, redisTemplate, serverFTPTaskStatsMapper, streamBridge);
+                        ftpLogThread.run();
                     });
                 } catch (Exception e) {
                     log.error("commit task error {}", e.getMessage());
