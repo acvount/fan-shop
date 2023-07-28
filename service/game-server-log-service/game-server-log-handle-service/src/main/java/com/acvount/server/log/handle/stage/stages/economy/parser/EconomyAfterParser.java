@@ -5,6 +5,7 @@ import com.acvount.server.log.economy.service.EconomyLogService;
 import com.acvount.server.log.lose.service.LoseLogService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.regex.Matcher;
@@ -20,14 +21,17 @@ import java.util.regex.Pattern;
 @Component
 public class EconomyAfterParser implements EconomyParser {
 
-    @Resource
-    private EconomyLogService economyLogService;
+    private final EconomyLogService economyLogService;
+    private final LoseLogService loseLogService;
 
-    @Resource
-    private LoseLogService loseLogService;
-    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?after tradeable (?<type>\\w+) (to|from) trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<afterCash>\\d.*?)cash,.*?(?<afterAccount>\\d+).*?account.*?(?<afterGold>\\d).*?(?<afterTraderMoney>\\d+).";
+    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?After Tradeable (?<type>\\w+) (to|from) trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<afterCash>\\d.*?)cash,.*?(?<afterAccount>\\d+).*?account.*?(?<afterGold>\\d).*?(?<afterTraderMoney>\\d+).";
     private static final Pattern logPattern = Pattern.compile(LOG_PATTERN);
 
+    @Autowired
+    public EconomyAfterParser(LoseLogService loseLogService,EconomyLogService economyLogService) {
+        this.loseLogService = loseLogService;
+        this.economyLogService = economyLogService;
+    }
     @Override
     @SuppressWarnings("all")
     public void consumer(String logText, Long serverId) {

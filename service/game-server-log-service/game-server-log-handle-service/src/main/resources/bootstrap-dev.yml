@@ -6,31 +6,28 @@ spring:
     name: server-log-handle-service
   datasource:
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.2.100:3306/fan_shop_log?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 123456
+    url: jdbc:mysql://rm-2zeeh682k7f1q79qwno.mysql.rds.aliyuncs.com:3306/fan_shop_log?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
+    username: zifan_rds
+    password: acfan0523@gmail
   cloud:
     stream:
       rocketmq:
         binder:
           name-server: 192.168.2.200:9876
-          group: game-log-topic
+          group: ROCKETMQ_GROUP
       bindings:
         logMessageConsumer-in-0:
-          destination: ame-log-topic
+          destination: game-log-topic
           content-type: application/json
-          group: game-log-topic
+          group: ROCKETMQ_GROUP
           consumer:
             concurrency: 20
             max-attempts: 1
 
     nacos:
-      server-addr: 192.168.2.100:8848
+      server-addr: 8.140.155.54:8848
+      username: nacos
+      password: cc1234567.
       discovery:
         namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
-      config:
-        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
-        file-extension: yaml
-        extension-configs:
-          - data-id: sms-dev.yaml
-            refresh: true
+

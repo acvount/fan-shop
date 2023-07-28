@@ -1,15 +1,13 @@
 package com.acvount.server.log.handle.stage.stages.economy.parser;
 
 import com.acvount.server.log.api.ecnonmy.domain.EconomyLog;
-import com.acvount.server.log.economy.mapper.EconomyLogMapper;
 import com.acvount.server.log.economy.service.EconomyLogService;
 import com.acvount.server.log.lose.service.LoseLogService;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -22,16 +20,19 @@ import java.util.regex.Pattern;
 @Slf4j
 @Component
 public class EconomyBeforeParser implements EconomyParser {
-    @Resource
-    private EconomyLogService economyLogService;
+    private final EconomyLogService economyLogService;
 
-    @Resource
-    private LoseLogService loseLogService;
+    private final LoseLogService loseLogService;
 
 //    2023.07.25-14.17.21: [trade] before purchasing tradeales from trader z_3_armory, player 8g272r(76561199339471681) had 0 cash, 12391 account balance and 0 gold and trader had 100000 funds.
-    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?before (?<type>.*?) .*? trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<beforeCash>\\d.*?)cash,.*?(?<beforeAccount>\\d.*?)account.*?(?<beforeGold>\\d).*?(?<beforeTraderMoney>\\d+).";
+    private static final String LOG_PATTERN = "(?<loggerDate>\\d|.*?):.*?Before (?<type>.*?) .*? trader(?<trader>[^,]+)_(?<region>\\w+).*?player(?<playerName>.*?)\\((?<playerSteamID>\\d*)\\).*?(?<beforeCash>\\d.*?)cash,.*?(?<beforeAccount>\\d.*?)account.*?(?<beforeGold>\\d).*?(?<beforeTraderMoney>\\d+).";
     private static final Pattern logPattern = Pattern.compile(LOG_PATTERN);
 
+    @Autowired
+    public EconomyBeforeParser(LoseLogService loseLogService,EconomyLogService economyLogService) {
+        this.loseLogService = loseLogService;
+        this.economyLogService = economyLogService;
+    }
     @Override
     @SuppressWarnings("all")
     public void consumer(String logText, Long serverId) {

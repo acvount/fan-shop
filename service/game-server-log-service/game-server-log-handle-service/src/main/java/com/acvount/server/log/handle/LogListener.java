@@ -3,6 +3,7 @@ package com.acvount.server.log.handle;
 import com.acvount.server.log.dto.LogMessage;
 import com.acvount.server.log.handle.stage.LogStage;
 import com.acvount.server.log.handle.stage.LogTypeStageChecker;
+import com.alibaba.fastjson.JSONObject;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
@@ -29,12 +30,13 @@ public class LogListener {
     private LogTypeStageChecker logTypeStageChecker;
 
     @Bean
-    public Function<Flux<Message<LogMessage>>, Mono<Void>> logMessageConsumer() {
+    public Function<Flux<Message<String>>, Mono<Void>> logMessageConsumer() {
         return flux -> flux.map(message -> {
-            LogMessage logMessage = message.getPayload();
+            LogMessage logMessage = JSONObject.parseObject(message.getPayload(), LogMessage.class);
             LogStage stage = logTypeStageChecker.getStage(logMessage.getType());
             if (Objects.isNull(stage)) {
                 log.error("no stage : {}", logMessage);
+                return message;
             }
             stage.consumer(logMessage);
             return message;

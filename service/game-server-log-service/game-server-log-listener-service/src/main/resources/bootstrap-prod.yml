@@ -5,7 +5,7 @@ spring:
     nacos:
       server-addr: 172.17.203.165:8848
       username: nacos
-      password: acfan0523@gmail
+      password: cc1234567.
       discovery:
         group: prod
         namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa

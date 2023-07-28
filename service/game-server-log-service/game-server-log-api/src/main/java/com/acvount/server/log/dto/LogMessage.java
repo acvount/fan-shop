@@ -2,6 +2,8 @@ package com.acvount.server.log.dto;
 
 import lombok.Data;
 
+import java.io.Serializable;
+
 /**
  * @author : acfan
  * date : create in 2023/7/24 20:55
@@ -9,7 +11,7 @@ import lombok.Data;
  **/
 
 @Data
-public class LogMessage {
+public class LogMessage implements Serializable {
 
     private Long ftpId;
     private Long serverId;

@@ -18,44 +18,20 @@ import java.util.Map;
 @Component
 public class LogTypeStageChecker {
 
-    private final Map<LogType, LogStage> stageMap;
+    private final Map<String, LogStage> stageMap;
 
     @Autowired
     public LogTypeStageChecker(AdminStage adminStage, ChatStage chatStage, EconomyStage economyStage,
                                EventKillStage eventKillStage, FamepointsStage famepointsStage,
                                GamePlayStage gamePlayStage, KillStage killStage, LoginStage loginStage,
                                ViolationsStage violationsStage) {
-        stageMap = new EnumMap<>(LogType.class);
-        stageMap.put(LogType.ADMIN, adminStage);
-        stageMap.put(LogType.CHAT, chatStage);
-        stageMap.put(LogType.ECONOMY, economyStage);
-        stageMap.put(LogType.EVENT_KILL, eventKillStage);
-        stageMap.put(LogType.FAMEPOINTS, famepointsStage);
-        stageMap.put(LogType.GAMEPLAY, gamePlayStage);
-        stageMap.put(LogType.KILL, killStage);
-        stageMap.put(LogType.LOGIN, loginStage);
-        stageMap.put(LogType.VIOLATIONS, violationsStage);
+        stageMap = Map.of("admin", adminStage, "chat", chatStage, "economy", economyStage,
+                "event_kill", eventKillStage, "famepoints", famepointsStage,
+                "gameplay", gamePlayStage, "kill", killStage, "login", loginStage,
+                "violations", violationsStage);
     }
 
-    public LogStage getStage(String logType) {
-        return stageMap.get(LogTypeStageChecker.LogType.valueOf(logType.toUpperCase()));
-    }
-
-    // 定义日志类型的枚举
-    public enum LogType {
-        ADMIN,
-        CHAT,
-        ECONOMY,
-        EVENT_KILL,
-        FAMEPOINTS,
-        GAMEPLAY,
-        KILL,
-        LOGIN,
-        VIOLATIONS;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
+    public LogStage getStage(String type) {
+        return stageMap.get(type);
     }
 }

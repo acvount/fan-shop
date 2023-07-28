@@ -18,8 +18,7 @@ public interface LogStage {
 
     default List<String> splitMessage(String content) {
         return Stream.of(content.replaceAll("\\u0028", "(")
-                        .replaceAll("\\u0029", ")")
-                        .toLowerCase().split("\n"))
+                        .replaceAll("\\u0029", ")").split("\n"))
                 .filter(StringUtils::isNotBlank).collect(Collectors.toList());
     }
 }
