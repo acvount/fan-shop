@@ -27,7 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <spring-cloud.version>2022.0.3</spring-cloud.version>
-        <spring-cloud-alibaba.version>2022.0.0.0-RC2</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2022.0.0.0</spring-cloud-alibaba.version>
         <spring-boot.version>3.1.1</spring-boot.version>
         <redis.version>2.4.1</redis.version>
         <curator.version>4.0.1</curator.version>
@@ -47,6 +47,10 @@
         <apache-redis-pool.version>2.11.1</apache-redis-pool.version>
         <springdoc.version>2.1.0</springdoc.version>
         <redison.version>3.23.1</redison.version>
+        <snakeyaml.version>2.0</snakeyaml.version>
+        <common-collections.version>3.2.2</common-collections.version>
+        <common-net.version>3.9.0</common-net.version>
+        <jackson-datatype.version>2.15.2</jackson-datatype.version>
     </properties>
 
     <dependencyManagement>
@@ -80,6 +84,11 @@
                 <groupId>com.alibaba.cloud</groupId>
                 <artifactId>spring-cloud-starter-alibaba-nacos-discovery</artifactId>
                 <version>${spring-cloud-alibaba.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>${snakeyaml.version}</version>
             </dependency>
             <!-- nacos config starter -->
             <dependency>
@@ -121,6 +130,11 @@
                 <version>${spring-cloud.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>${common-collections.version}</version>
             </dependency>
             <!--spring boot 依赖-->
             <dependency>
