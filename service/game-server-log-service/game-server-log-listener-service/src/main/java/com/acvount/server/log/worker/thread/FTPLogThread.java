@@ -19,8 +19,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.messaging.Message;
@@ -281,15 +279,14 @@ public class FTPLogThread implements Runnable {
             if (ftpClient.isAvailable()) {
                 InputStream inputStream = ftpClient.retrieveFileStream(RemoteFolderPath + file.getName());
                 String content = readFTPFileByStart(inputStream, start);
-
-                if (content != null) {
-                    if (Boolean.FALSE.equals(redisTemplate.hasKey(CalculateUtils.md5(content)))) {
-                        redisTemplate.opsForValue().set(CalculateUtils.md5(content), "repeat", 5, TimeUnit.MINUTES);
+                simpleProcessContent(content, fileMD5DTO.getType()).forEach(context -> {
+                    if (Boolean.FALSE.equals(redisTemplate.hasKey(CalculateUtils.md5(context)))) {
+                        redisTemplate.opsForValue().set(CalculateUtils.md5(context), "repeat", 5, TimeUnit.MINUTES);
                         redisTemplate.opsForHash().put(serverFTP.getIp() + "-repeat", content, "");
-                        streamBridge.send(RocketMQConsts.GameLogTopic, assembleMessageBody(fileMD5DTO.getType(), content));
+                        streamBridge.send(RocketMQConsts.GameLogTopic, assembleMessageBody(fileMD5DTO.getType(), context));
                         log.info("FTP: {} 消费一次消息成功 File :{}", serverFTP.getIp(), file.getName());
                     }
-                }
+                });
             }
         } catch (IOException e) {
             if ("Connection closed without indication.".equalsIgnoreCase(e.getMessage()) || "Broken pipe".equalsIgnoreCase(e.getMessage())) {
@@ -299,6 +296,13 @@ public class FTPLogThread implements Runnable {
                 log.error("消费一次任务失败: {}", e.getMessage());
             }
         }
+    }
+
+    private List<String> simpleProcessContent(String content, String type) {
+        if ("economy".equals(type)) {
+            return List.of(content);
+        }
+        return Arrays.stream(content.split("\n")).filter(StringUtils::isNotBlank).collect(Collectors.toList());
     }
 
     private void updateCacheAndDB(FTPMetadata ftpMetadata) {
