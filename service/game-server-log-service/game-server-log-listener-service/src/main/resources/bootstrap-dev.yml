@@ -1,46 +1,27 @@
-server:
-  port: 9702
-
 spring:
-  main:
-    allow-bean-definition-overriding: true
   application:
     name: server-log-listener-service
-
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://rm-2zeeh682k7f1q79qwno.mysql.rds.aliyuncs.com:3306/fan_shop_server?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: zifan_rds
-    password: acfan0523@gmail
-
   cloud:
-    stream:
-      rocketmq:
-        binder:
-          name-server: 192.168.2.200:9876
     nacos:
-      server-addr: localhost:8848
+      server-addr: 8.140.155.54:8848
       username: nacos
       password: cc1234567.
       discovery:
-        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        group: dev
+        namespace: fan-shop-dev
       config:
-        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        group: dev
+        namespace: fan-shop-dev
         file-extension: yaml
         extension-configs:
-          - data-id: common-dubbo-dev.yaml
+          - data-id: game-server-log-listener-dev.yaml
+            group: game_server_log
             refresh: true
-            group: DEFAULT_GROUP
 
-          - data-id: common-redis-dev.yaml
+          - data-id: game-log-redis.yaml
+            group: game_server_log
             refresh: true
-            group: DEFAULT_GROUP
 
-          - data-id: common-mybatisplus-dev.yaml
+          - data-id: common-mybatis-plus.yaml
+            group: common
             refresh: true
-            group: DEFAULT_GROUP
-logging:
-  level:
-    root: info
-    com.acvount: info
-    com.acvount.server.log.worker.thread: debug
