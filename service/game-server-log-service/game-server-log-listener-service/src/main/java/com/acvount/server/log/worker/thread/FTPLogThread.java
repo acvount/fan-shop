@@ -27,6 +27,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -196,16 +197,16 @@ public class FTPLogThread implements Runnable {
         }
         log.debug("服务器：「{}」获取到任务元数据 线程ID:「{}」", serverFTP.getIp(), ftpMetadata.getThreadId());
         Map<String, FileMD5DTO> fileTypes = ftpMetadata.getFileTypes();
-        FTPFile[] ftpFiles;
+        FTPFile[] ftpFiles = null;
         try {
             ftpFiles = ftpClient.listFiles(RemoteFolderPath);
             log.debug("获取到文件列表：{}.length", ftpFiles.length);
         } catch (IOException e) {
-            if (e instanceof SocketTimeoutException) {
+            if (e instanceof SocketTimeoutException || e instanceof SocketException) {
                 getFtpClient();
                 return start(this.ftpClient, ftpMetadata);
             } else {
-                throw new RuntimeException(e);
+                log.error("run task error metadata : {}", e.getMessage());
             }
         }
         Map<String, List<FTPFile>> typeToFileListMap = Arrays.stream(ftpFiles).filter(e -> (e.getSize() > 98))
