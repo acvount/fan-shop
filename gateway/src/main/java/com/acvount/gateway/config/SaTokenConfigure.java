@@ -35,9 +35,8 @@ public class SaTokenConfigure {
                 .addInclude(INCLUDE_PATH)
                 .addExclude(EXCLUDE_PATH)
                 .setAuth(obj -> {
-
                     SaRouter.match("/**", StpUtil::checkLogin);
-                    SaRouter.match("/user-service/**", r -> StpUtil.checkPermission("user"));
+//                    SaRouter.match("/user-service/**", r -> StpUtil.checkPermission("user"));
                 })
                 .setError(e -> {
                     log.error("😭sa-token error ->：{}", e.getMessage());
