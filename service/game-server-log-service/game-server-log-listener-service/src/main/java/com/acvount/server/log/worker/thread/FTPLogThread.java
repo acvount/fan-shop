@@ -37,7 +37,6 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -63,8 +62,6 @@ public class FTPLogThread implements Runnable {
     private final StreamBridge streamBridge;
 
     private final static Integer MAX_ERROR_COUNT = 5;
-
-    private AtomicInteger errorCount = new AtomicInteger();
 
 
     public FTPLogThread(ServerFTP serverFTP,
@@ -112,29 +109,15 @@ public class FTPLogThread implements Runnable {
         log.info("task canceled id:{} ip:{} state:{}", IDUtils.programID(), serverFTP.getIp(), state);
     }
 
-    private boolean checkConnectErrorCount() {
-        int andIncrement = errorCount.getAndIncrement();
-        log.error("connect error current count {} max count {}", andIncrement, MAX_ERROR_COUNT);
-        if (andIncrement >= MAX_ERROR_COUNT) {
-            cancelTaskByState(6);
-            log.error("is max connect count IP:{}", serverFTP.getIp());
-            Thread.currentThread().interrupt();
-            return false;
-        }
-        return true;
-    }
-
     private FTPClient getFtpClient() {
         FTPClient ftpClient = new FTPClient();
+        ftpClient.setDataTimeout(10000);
         try {
             ftpClient.connect(serverFTP.getIp(), serverFTP.getPort());
         } catch (IOException e) {
-            if (checkConnectErrorCount()) {
-                return getFtpClient();
-            }
+            log.debug("can't get ftp connection {}", serverFTP.getIp());
             return null;
         }
-        errorCount = new AtomicInteger();
         try {
             boolean login = ftpClient.login(serverFTP.getUsername(), serverFTP.getPassword());
             if (!login) {
@@ -204,10 +187,11 @@ public class FTPLogThread implements Runnable {
             log.debug("获取到文件列表：{}.length", ftpFiles.length);
         } catch (IOException e) {
             if (e instanceof SocketTimeoutException || e instanceof SocketException) {
-                getFtpClient();
-                return start(this.ftpClient, ftpMetadata);
+                log.debug("task get log ftp socket error : {}", serverFTP.getIp());
+                return false;
             } else {
                 log.error("run task error metadata : {}", e.getMessage());
+                return false;
             }
         }
         Map<String, List<FTPFile>> typeToFileListMap = Arrays.stream(ftpFiles).filter(e -> (e.getSize() > 98))

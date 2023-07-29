@@ -1,5 +1,6 @@
 package com.acvount.server.bean;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,6 +12,7 @@ import java.time.LocalDateTime;
  **/
 
 @Data
+@TableName("server_ftp_task_stats")
 public class ServerFtpTaskStats {
     private Long ftpId;
     private String threadId;

@@ -1,6 +1,4 @@
 spring:
-  application:
-    name: gateway
   cloud:
     nacos:
       server-addr: 172.17.203.165:8848
@@ -14,10 +12,6 @@ spring:
         namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
         file-extension: yaml
         extension-configs:
-          - dataId: gateway-prod.yaml
-            group: gateway
-            refresh: true
-
-          - data-id: common-redis.yaml
-            group: common
+          - data-id: sms-prod.yaml
+            group: sms
             refresh: true

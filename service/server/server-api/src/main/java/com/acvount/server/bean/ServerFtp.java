@@ -2,6 +2,7 @@ package com.acvount.server.bean;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
@@ -11,7 +12,7 @@ import java.time.LocalDateTime;
  **/
 
 @Data
-public class ServerFtp {
+public class ServerFtp implements Serializable {
     private Long id;
     private Long serverId;
     private Long ownerId;

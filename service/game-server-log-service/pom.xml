@@ -16,6 +16,7 @@
         <module>game-server-log-listener-service</module>
         <module>game-server-log-handle-service</module>
         <module>game-server-log-api</module>
+        <module>game-server-log-show-service</module>
     </modules>
 
     <properties>

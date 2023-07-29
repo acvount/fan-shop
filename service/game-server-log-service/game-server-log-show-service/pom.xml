@@ -5,43 +5,41 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.acvount</groupId>
-        <artifactId>sms</artifactId>
+        <artifactId>game-server-log-service</artifactId>
         <version>1.0</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
 
-    <artifactId>sms-service</artifactId>
+    <artifactId>game-server-log-show-service</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.acvount</groupId>
-            <artifactId>sms-api</artifactId>
-            <version>${project.version}</version>
+            <artifactId>game-server-log-api</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <scope>provided</scope>
+            <groupId>com.acvount</groupId>
+            <artifactId>server-api</artifactId>
+            <version>1.0</version>
         </dependency>
         <dependency>
             <groupId>com.acvount</groupId>
             <artifactId>common-service-web-starter</artifactId>
         </dependency>
-
         <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-stream-rocketmq</artifactId>
+            <groupId>com.acvount</groupId>
+            <artifactId>common-mybatis-plus-starter</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-stream</artifactId>
-        </dependency>
-
     </dependencies>
+
     <build>
         <plugins>
             <plugin>

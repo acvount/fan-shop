@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: server-log-show-service
+  cloud:
+    nacos:
+      server-addr: 8.140.155.54:8848
+      username: nacos
+      password: cc1234567.
+      discovery:
+        group: dev
+        namespace: fan-shop-dev
+      config:
+        group: dev
+        namespace: fan-shop-dev
+        file-extension: yaml
+        extension-configs:
+          - data-id: game-server-log-show-dev.yaml
+            group: game_server_log
+            refresh: true
+
+          - data-id: common-mybatis-plus.yaml
+            group: common
+            refresh: true
+logging:
+  level:
+    root: info
+    com.acvount: info
+    com.acvount.server.log.worker.thread: debug

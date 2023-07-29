@@ -1,19 +1,19 @@
 spring:
   cloud:
     nacos:
-      server-addr: 8.140.155.54:8848
+      server-addr: 172.17.203.165:8848
       username: nacos
       password: cc1234567.
       discovery:
-        group: dev
-        namespace: fan-shop-dev
+        group: prod
+        namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
       config:
-        group: dev
-        namespace: fan-shop-dev
+        group: prod
+        namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
         file-extension: yaml
         extension-configs:
-          - data-id: auth-dev.yaml
-            group: auth
+          - data-id: user-prod.yaml
+            group: user
             refresh: true
 
           - data-id: common-mybatis-plus.yaml
@@ -25,7 +25,7 @@ spring:
             refresh: true
 dubbo:
   application:
-    name: auth-dubbo-service
+    name: user-dubbo-service
     metadata-type: local
     qosEnable: false
 
@@ -34,16 +34,20 @@ dubbo:
     port: -1
 
   registry:
-    address: nacos://8.140.155.54:8848
+    address: nacos://172.17.203.165:8848
     username: nacos
     password: cc1234567.
-    group: dev
+    group: prod
     parameters:
-      "namespace": fan-shop-dev
+      "namespace": 84c25bdd-658c-4cb8-acf3-7031e154d5aa
     check: false
-    register-mode: interface
     use-as-metadata-center: false
+    use-as-config-center: false
+
+  config-center:
+    check: false
 
   consumer:
     check: false
     timeout: 3000
+

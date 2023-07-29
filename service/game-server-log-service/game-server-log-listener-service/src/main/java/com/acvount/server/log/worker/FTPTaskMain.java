@@ -95,14 +95,16 @@ public class FTPTaskMain {
                         threadPoolExecutor.execute(() -> {
                             RLock lock = redissonClient.getLock("thread-lock-" + CalculateUtils.md5(serverFTP));
                             try {
-                                if (lock.tryLock(0, TimeUnit.MICROSECONDS)) {
+                                if (lock.tryLock(30,0, TimeUnit.SECONDS)) {
                                     try {
                                         long l = System.currentTimeMillis();
                                         log.debug("ftp {} task commit locked ", serverFTP.getIp());
                                         FTPLogThread ftpLogThread = new FTPLogThread(serverFTP, redisTemplate, serverFTPTaskStatsMapper, streamBridge);
                                         ftpLogThread.run();
                                         log.debug("ftp {} task success run time :{} unlocked", serverFTP.getIp(), System.currentTimeMillis() - l);
-                                    } finally {
+                                    }catch (Exception e){
+                                        log.error(e.getMessage());
+                                    } finally{
                                         lock.unlock();
                                     }
                                 }
