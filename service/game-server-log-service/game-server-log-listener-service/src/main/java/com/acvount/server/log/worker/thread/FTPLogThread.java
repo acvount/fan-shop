@@ -71,6 +71,7 @@ public class FTPLogThread implements Runnable {
                         RedisTemplate<String, String> redisTemplate,
                         ServerFTPTaskStatsMapper serverFTPTaskStatsMapper,
                         StreamBridge streamBridge) {
+
         this.serverFTP = serverFTP;
         this.redisTemplate = redisTemplate;
         this.serverFTPTaskStatsMapper = serverFTPTaskStatsMapper;

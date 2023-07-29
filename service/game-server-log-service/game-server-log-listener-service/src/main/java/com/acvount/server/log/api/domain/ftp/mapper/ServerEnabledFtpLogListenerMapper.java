@@ -18,4 +18,6 @@ public interface ServerEnabledFtpLogListenerMapper extends BaseMapper<ServerEnab
     @Select("select count(0) from server_enabled_ftp_log_listener where task_status = 1 and ftp_id = #{ftpId}")
     Boolean isStarted(@Param("ftpId") Long ftpId);
 
+    @Select("select * from server_enabled_ftp_log_listener where  ftp_id = #{ftpId}")
+    ServerEnabledFtpLogListener selectByFtpId(Long id);
 }
