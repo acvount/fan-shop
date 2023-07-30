@@ -9,11 +9,10 @@ import com.acvount.server.log.consts.RedisCacheConsts;
 import com.acvount.server.log.worker.thread.FTPLogThread;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.micrometer.common.util.StringUtils;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.redisson.api.RLock;
-import org.redisson.api.RedissonClient;
 import org.springframework.cloud.stream.function.StreamBridge;
 import org.springframework.data.redis.core.ListOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,7 +20,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author : acfan
@@ -46,9 +48,6 @@ public class FTPTaskMain {
 
     @Resource
     private StreamBridge streamBridge;
-
-    @Resource
-    private RedissonClient redissonClient;
 
     private ExecutorService threadPoolExecutor;
 
@@ -93,22 +92,19 @@ public class FTPTaskMain {
                         }
 
                         threadPoolExecutor.execute(() -> {
-                            RLock lock = redissonClient.getLock("thread-lock-" + CalculateUtils.md5(serverFTP));
+                            String lockKey = "thread-lock-" + CalculateUtils.md5(serverFTP);
+                            String lock = redisTemplate.opsForValue().get(lockKey);
                             try {
-                                if (lock.tryLock(30,0, TimeUnit.SECONDS)) {
-                                    try {
-                                        long l = System.currentTimeMillis();
-                                        log.debug("ftp {} task commit locked ", serverFTP.getIp());
-                                        FTPLogThread ftpLogThread = new FTPLogThread(serverFTP, redisTemplate, serverFTPTaskStatsMapper, streamBridge);
-                                        ftpLogThread.run();
-                                        log.debug("ftp {} task success run time :{} unlocked", serverFTP.getIp(), System.currentTimeMillis() - l);
-                                    }catch (Exception e){
-                                        log.error(e.getMessage());
-                                    } finally{
-                                        lock.unlock();
-                                    }
+                                if (StringUtils.isBlank(lock)) {
+                                    redisTemplate.opsForValue().set(lockKey, serverFTP.getIp(), 10, TimeUnit.SECONDS);
+                                    long l = System.currentTimeMillis();
+                                    log.debug("ftp {} task commit locked ", serverFTP.getIp());
+                                    FTPLogThread ftpLogThread = new FTPLogThread(serverFTP, redisTemplate, serverFTPTaskStatsMapper, streamBridge);
+                                    ftpLogThread.run();
+                                    log.debug("ftp {} task success run time :{} unlocked", serverFTP.getIp(), System.currentTimeMillis() - l);
+                                    redisTemplate.delete(lockKey);
                                 }
-                            } catch (InterruptedException e) {
+                            } catch (Exception e) {
                                 log.error(e.getMessage());
                             }
                         });
@@ -119,7 +115,7 @@ public class FTPTaskMain {
                 index++;
             } while (true);
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("commit task error : {}", e.getMessage());
         }
     }
 
