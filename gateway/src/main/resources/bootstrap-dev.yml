@@ -18,6 +18,6 @@ spring:
             group: gateway
             refresh: true
 
-          - data-id: common-redis-dev.yaml
+          - data-id: common-redis.yaml
             group: common
             refresh: true
