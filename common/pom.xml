@@ -12,6 +12,7 @@
     <artifactId>common</artifactId>
     <modules>
         <module>common-core</module>
+        <module>common-file-storage</module>
         <module>common-service-web-starter</module>
         <module>common-mybatis-plus-starter</module>
     </modules>
