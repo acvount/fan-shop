@@ -4,6 +4,7 @@ import com.acvount.common.core.result.config.ResultStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 
 import java.io.Serializable;
 
@@ -12,6 +13,7 @@ import java.io.Serializable;
  * @date : create in 2021/7/22 15:11
  * description : 返回类
  **/
+@Getter
 @Builder
 @Data
 @AllArgsConstructor
@@ -34,11 +36,11 @@ public class Result<T> implements Serializable {
         this.data = data;
     }
 
-    public static <T> Result<T> ok(T data) {
+    public static <T> Result<T> success(T data) {
         return Result.<T>builder().code(ResultStatus.SUCCESS.code).msg(ResultStatus.SUCCESS.message).data(data).build();
     }
 
-    public static <T> Result<T> ok(T data, String msg) {
+    public static <T> Result<T> success(T data, String msg) {
         return Result.<T>builder().code(ResultStatus.SUCCESS.code).msg(msg).data(data).build();
     }
 
@@ -50,10 +52,6 @@ public class Result<T> implements Serializable {
         return Result.<T>builder().code(ResultStatus.FAIL.code).msg(ResultStatus.FAIL.message).build();
     }
 
-
-    public T getData() {
-        return data;
-    }
 
     public void setData(T data) {
         this.data = data;
