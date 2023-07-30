@@ -22,11 +22,11 @@ public class PhoneLoginController {
 
     @GetMapping("sendCode")
     public Result<Boolean> sendCode(@RequestParam("phone") String phone) {
-        return Result.ok(phoneLoginService.sendCode(phone));
+        return Result.success(phoneLoginService.sendCode(phone));
     }
 
     @PostMapping("checkCode")
     public Result<String> checkCode(@RequestBody LoginVO loginVO) throws BaseException {
-        return Result.ok(phoneLoginService.checkCode(loginVO));
+        return Result.success(phoneLoginService.checkCode(loginVO));
     }
 }
