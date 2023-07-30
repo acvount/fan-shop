@@ -21,6 +21,7 @@ public class UserInfo implements Serializable {
     private boolean gender;
     private String avatar;
     private Boolean disableFlag;
+    private Boolean serverOwnerFlag;
     private LocalDateTime createTime;
     private LocalDateTime modifyTime;
 }

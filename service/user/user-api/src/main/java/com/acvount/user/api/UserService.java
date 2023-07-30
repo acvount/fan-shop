@@ -15,4 +15,6 @@ public interface UserService {
     public UserInfo getUserByMobile(String phone);
 
     public UserAuthorization getUserAuthorizationByMobile(String phone);
+
+    public Integer modifyServerFlag(Long userId);
 }
