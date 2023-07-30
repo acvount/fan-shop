@@ -10,13 +10,14 @@ import java.io.Serializable;
 
 /**
  * @author : 小凡
- * @date : create in 2021/7/22 15:11
+ * date : create in 2021/7/22 15:11
  * description : 返回类
  **/
 @Getter
 @Builder
 @Data
 @AllArgsConstructor
+@SuppressWarnings("all")
 public class Result<T> implements Serializable {
 
     public T data;

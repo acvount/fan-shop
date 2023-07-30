@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 /**
  * @author : 小凡
- * @date : create in 2021/7/22 14:48
+ * date : create in 2021/7/22 14:48
  * description :
  **/
 public enum ExceptionType implements Serializable {
