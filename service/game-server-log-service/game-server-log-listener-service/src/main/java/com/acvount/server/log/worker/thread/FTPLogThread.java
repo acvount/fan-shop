@@ -14,9 +14,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.google.common.collect.Lists;
-import io.micrometer.common.util.StringUtils;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
 import org.springframework.cloud.stream.function.StreamBridge;
@@ -285,9 +285,6 @@ public class FTPLogThread implements Runnable {
     }
 
     private List<String> simpleProcessContent(String content, String type) {
-        if ("economy".equals(type)) {
-            return List.of(content);
-        }
         return Arrays.stream(content.split("\n")).filter(StringUtils::isNotBlank).collect(Collectors.toList());
     }
 
@@ -327,7 +324,7 @@ public class FTPLogThread implements Runnable {
             return outputStream.toString(StandardCharsets.UTF_16LE);
         } catch (IOException e) {
             log.error("读取文件出错{}", e.getMessage());
-            return "读取文件出错,线程ID:" + IDUtils.programID() + "元信息：" + e.getMessage();
+            return StringUtils.EMPTY;
         } finally {
             try {
                 outputStream.close();
