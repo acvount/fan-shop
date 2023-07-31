@@ -1,6 +1,6 @@
 package com.acvount.user.service;
 
-import com.acvount.user.api.UserService;
+import com.acvount.user.api.UserServiceApi;
 import com.acvount.user.bean.UserAuthorization;
 import com.acvount.user.bean.UserInfo;
 import com.acvount.user.mapper.UserAuthorizationMapper;
@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @DubboService
 @SuppressWarnings("unused")
-public class UserServiceApiImpl implements UserService {
+public class UserServiceApiApiImpl implements UserServiceApi {
 
     @Resource
     private UserInfoMapper userInfoMapper;

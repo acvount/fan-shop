@@ -10,7 +10,7 @@ import com.acvount.user.bean.UserInfo;
  **/
 
 @SuppressWarnings("unused")
-public interface UserService {
+public interface UserServiceApi {
     UserInfo createUser(UserInfo userInfo, UserAuthorization userAuthorization);
 
     UserInfo getUserByMobile(String phone);
