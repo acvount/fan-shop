@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
  **/
 
 @DubboService
+@SuppressWarnings("unused")
 public class UserServiceApiImpl implements UserService {
 
     @Resource
