@@ -3,6 +3,7 @@ package com.acvount.user.service;
 import com.acvount.user.bean.UserAuthorization;
 import com.acvount.user.mapper.UserAuthorizationMapper;
 import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
 
 /**
  * @author : acfan
@@ -10,7 +11,7 @@ import jakarta.annotation.Resource;
  * description :
  **/
 
-@Resource
+@Service
 public class UserAuthorizationService {
 
     @Resource
