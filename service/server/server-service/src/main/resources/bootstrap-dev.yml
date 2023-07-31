@@ -23,30 +23,10 @@ spring:
           - data-id: common-mybatis-plus.yaml
             group: common
             refresh: true
+
+          - data-id: common-dubbo.yaml
+            group: common
+            refresh: true
 dubbo:
   application:
     name: server-service
-    metadata-type: local
-    qos-enable: true
-    qos-port: -1
-    qos-accept-foreign-ip: false
-
-  protocol:
-    name: dubbo
-    port: -1
-
-  registry:
-    address: nacos://8.140.155.54:8848
-    username: nacos
-    password: cc1234567.
-    group: DEFAULT_GROUP
-    parameters:
-      "namespace": fan-shop-dev
-    check: false
-    use-as-metadata-center: false
-    use-as-config-center: false
-
-  consumer:
-    check: false
-    timeout: 3000
-

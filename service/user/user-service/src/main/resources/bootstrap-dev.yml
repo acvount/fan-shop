@@ -23,31 +23,10 @@ spring:
           - data-id: common-redis.yaml
             group: common
             refresh: true
+
+          - data-id: common-dubbo.yaml
+            group: common
+            refresh: true
 dubbo:
   application:
     name: user-dubbo-service
-    metadata-type: local
-    qosEnable: false
-
-  protocol:
-    name: dubbo
-    port: -1
-
-  registry:
-    address: nacos://8.140.155.54:8848
-    username: nacos
-    password: cc1234567.
-    group: dev
-    parameters:
-      "namespace": fan-shop-dev
-    check: false
-    use-as-metadata-center: false
-    use-as-config-center: false
-
-  config-center:
-    check: false
-
-  consumer:
-    check: false
-    timeout: 3000
-

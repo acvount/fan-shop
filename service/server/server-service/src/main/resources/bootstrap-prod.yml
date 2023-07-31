@@ -12,15 +12,15 @@ spring:
         namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
         file-extension: yaml
         extension-configs:
-          - data-id: auth-prod.yaml
-            group: auth
-            refresh: true
-
-          - data-id: common-mybatis-plus.yaml
-            group: common
+          - data-id: server-prod.yaml
+            group: server
             refresh: true
 
           - data-id: common-redis.yaml
+            group: common
+            refresh: true
+
+          - data-id: common-mybatis-plus.yaml
             group: common
             refresh: true
 
@@ -29,4 +29,4 @@ spring:
             refresh: true
 dubbo:
   application:
-    name: auth-dubbo-service
+    name: server-service
