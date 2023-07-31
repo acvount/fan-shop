@@ -30,9 +30,8 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 public class PhoneLoginService {
-
-    public static final String TEMPLATE_CODE = "SMS_154950909";
-    public static final String SIGN_NAME = "阿里云短信测试";
+    public static final String TEMPLATE_CODE = "SMS_269465068";
+    public static final String SIGN_NAME = "俄芒特";
     public static final String REDIS_PREFIX = "login_code_";
     public static final Integer ERROR_COUNT = 5;
     @SuppressWarnings("unused")
