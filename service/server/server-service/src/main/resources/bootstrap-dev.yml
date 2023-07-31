@@ -1,34 +1,31 @@
-server:
-  port: 9703
-
 spring:
-  application:
-    name: user-service
-  datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://192.168.2.100:3306/fan_shop_user?serverTimezone=Asia/Shanghai&useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&useSSL=false&allowPublicKeyRetrieval=true
-    username: root
-    password: 123456
   cloud:
     nacos:
-      server-addr: localhost:8848
+      server-addr: 8.140.155.54:8848
+      username: nacos
+      password: cc1234567.
       discovery:
-        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        group: dev
+        namespace: fan-shop-dev
       config:
-        namespace: f5d53f37-d171-43c7-9b77-01c64eeae769
+        group: dev
+        namespace: fan-shop-dev
         file-extension: yaml
         extension-configs:
-          - data-id: user-dev.yaml
+          - data-id: server-dev.yaml
+            group: server
             refresh: true
-          - data-id: common-dubbo-dev.yaml
+
+          - data-id: common-redis.yaml
+            group: common
             refresh: true
-          - data-id: common-redis-dev.yaml
-            refresh: true
-          - data-id: common-mybatisplus.yaml
+
+          - data-id: common-mybatis-plus.yaml
+            group: common
             refresh: true
 dubbo:
   application:
-    name: user-service
+    name: server-service
     metadata-type: local
     qos-enable: true
     qos-port: -1
@@ -39,12 +36,12 @@ dubbo:
     port: -1
 
   registry:
-    address: nacos://localhost:8848
+    address: nacos://8.140.155.54:8848
     username: nacos
     password: cc1234567.
     group: DEFAULT_GROUP
     parameters:
-      "namespace": f5d53f37-d171-43c7-9b77-01c64eeae769
+      "namespace": fan-shop-dev
     check: false
     use-as-metadata-center: false
     use-as-config-center: false
