@@ -71,6 +71,11 @@
                 <artifactId>common-mybatis-plus-starter</artifactId>
                 <version>${project.version}</version>
             </dependency>
+            <dependency>
+                <groupId>com.acvount</groupId>
+                <artifactId>common-file-storage</artifactId>
+                <version>1.0</version>
+            </dependency>
             <!-- common models end -->
             <!-- dubbo starter -->
             <dependency>

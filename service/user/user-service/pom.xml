@@ -26,6 +26,10 @@
         </dependency>
         <dependency>
             <groupId>com.acvount</groupId>
+            <artifactId>common-file-storage</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.acvount</groupId>
             <artifactId>common-service-web-starter</artifactId>
         </dependency>
         <dependency>

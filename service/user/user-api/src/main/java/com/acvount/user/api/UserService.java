@@ -9,12 +9,13 @@ import com.acvount.user.bean.UserInfo;
  * description :
  **/
 
+@SuppressWarnings("unused")
 public interface UserService {
-    public UserInfo createUser(UserInfo userInfo, UserAuthorization userAuthorization);
+    UserInfo createUser(UserInfo userInfo, UserAuthorization userAuthorization);
 
-    public UserInfo getUserByMobile(String phone);
+    UserInfo getUserByMobile(String phone);
 
-    public UserAuthorization getUserAuthorizationByMobile(String phone);
+    UserAuthorization getUserAuthorizationByMobile(String phone);
 
-    public Integer modifyServerFlag(Long userId);
+    Integer modifyServerFlag(Long userId);
 }
