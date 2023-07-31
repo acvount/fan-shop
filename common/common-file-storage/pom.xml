@@ -63,8 +63,6 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-extra</artifactId>
             <version>${hutool.version}</version>
-            <scope>provided</scope>
-            <optional>true</optional>
         </dependency>
 
         <!-- AWS S3 -->
@@ -160,7 +158,6 @@
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-core</artifactId>
             <version>${hutool.version}</version>
-            <scope>provided</scope>
         </dependency>
 
         <!-- 图片处理 https://github.com/coobird/thumbnailator -->
