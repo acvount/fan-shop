@@ -33,7 +33,8 @@ public class RegisterService {
 
     public UserInfo createAccount(String phone, String password) {
         long userId = snowflakeIdGenerator.nextId();
-        UserInfo userInfo = UserInfo.builder().userId(userId).build();
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(userId);
         UserAuthorization userAuthorization;
         userAuthorization = StringUtils.isNotBlank(phone) ? generPhoneCreateAccount(phone) : generPasswordCreateAccount(phone, password);
         return userService.createUser(userInfo, userAuthorization);

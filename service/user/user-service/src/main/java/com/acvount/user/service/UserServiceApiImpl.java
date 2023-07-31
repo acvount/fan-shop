@@ -52,7 +52,10 @@ public class UserServiceApiImpl implements UserService {
 
     @Override
     public Integer modifyServerFlag(Long userId) {
-        return userInfoMapper.updateById(UserInfo.builder().userId(userId).serverOwnerFlag(true).build());
+        UserInfo userInfo = new UserInfo();
+        userInfo.setUserId(userId);
+        userInfo.setServerOwnerFlag(true);
+        return userInfoMapper.updateById(userInfo);
     }
 
     @Override

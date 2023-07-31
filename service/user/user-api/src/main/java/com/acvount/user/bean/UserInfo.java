@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
  **/
 
 @Data
-@Builder
 public class UserInfo implements Serializable {
     @TableId
     private Long userId;

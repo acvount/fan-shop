@@ -44,14 +44,11 @@ public class UserInfoService {
         deleteHistoryHeaderImage(userInfo);
         FileInfo upload = upload(file, loginUserID);
 
-        userService.updateUserById(UserInfo.builder()
-                .userId(userInfo.getUserId())
-                .avatar(upload.getUrl())
-                .thumbnailAvatar(upload.getThUrl())
-                .build());
-
         userInfo.setAvatar(upload.getUrl());
         userInfo.setThumbnailAvatar(upload.getThUrl());
+        userService.updateUserById(userInfo);
+
+
         return Result.success(userInfo);
     }
 
