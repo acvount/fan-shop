@@ -4,8 +4,6 @@ import com.acvount.common.core.id.SnowflakeIdGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.Random;
-
 /**
  * @author : acfan
  * date : create in 2023/7/1 18:37
@@ -17,7 +15,7 @@ public class SnowflakeIdGeneratorConfig {
 
     @Bean
     public SnowflakeIdGenerator snowflakeIdGenerator() {
-        long workerId = new Random().nextLong(0,SnowflakeIdGenerator.MAX_WORKER_ID);
+        long workerId = 1;
         long dataCenterId = 1;
         return new SnowflakeIdGenerator(workerId, dataCenterId);
     }
