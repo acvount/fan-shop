@@ -25,3 +25,7 @@ spring:
           - data-id: common-mybatis-plus.yaml
             group: common
             refresh: true
+
+          - data-id: common-dubbo.yaml
+            group: common
+            refresh: true

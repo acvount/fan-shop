@@ -1,5 +1,6 @@
 package com.acvount.log.show.controller;
 
+import com.acvount.common.core.exception.BaseException;
 import com.acvount.common.core.result.Result;
 import com.acvount.log.show.pojo.LogVO;
 import com.acvount.log.show.service.LogService;
@@ -25,8 +26,8 @@ public class LogController {
     private LogService logService;
 
     @GetMapping("type/{type}")
-    public Result<Object> getLogs(@PathVariable String type, Integer size, Long lastId) {
-        Object logByType = logService.getLogByType(type, size, lastId);
+    public Result<Object> getLogs(@PathVariable String type, Integer size, Long lastId, Long serverId) throws BaseException {
+        Object logByType = logService.getLogByType(type, size, lastId, serverId);
         return Result.success(logByType);
     }
 }
