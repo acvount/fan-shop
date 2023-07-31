@@ -44,7 +44,7 @@ public class ServerController {
         Integer i = serverService.addServer(serverDO);
         ServerFtp ftpDO = ownerAddVO.getFtpDO(loginUserID, serverDO.getId());
         i += serverFtpService.addFtp(ftpDO);
-        userService.modifyServerFlag(loginUserID);
+        i += userService.modifyServerFlag(loginUserID);
         return Result.success(i > 0);
     }
 }
