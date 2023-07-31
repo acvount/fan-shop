@@ -9,10 +9,12 @@ import com.acvount.server.service.ServerFtpService;
 import com.acvount.server.service.ServerService;
 import com.acvount.user.api.UserService;
 import com.acvount.web.LoginUser;
-import jakarta.annotation.Resource;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 /**
  * @author : acfan
