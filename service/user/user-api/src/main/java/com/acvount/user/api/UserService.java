@@ -15,7 +15,11 @@ public interface UserService {
 
     UserInfo getUserByMobile(String phone);
 
+    UserAuthorization getUserAuthorizationById(Long id);
+
     UserAuthorization getUserAuthorizationByMobile(String phone);
 
     Integer modifyServerFlag(Long userId);
+
+    Integer updateUserAuthorizationById(UserAuthorization userAuthorization);
 }

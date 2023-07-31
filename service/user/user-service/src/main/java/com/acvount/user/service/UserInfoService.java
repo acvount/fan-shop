@@ -69,4 +69,8 @@ public class UserInfoService {
             fileStorageService.delete(userInfo.getThumbnailAvatar());
         }
     }
+
+    public UserInfo getUserDetail() throws BaseException {
+        return userService.selectById(LoginUser.getLoginUserID());
+    }
 }

@@ -40,6 +40,11 @@ public class UserServiceApiImpl implements UserService {
     }
 
     @Override
+    public UserAuthorization getUserAuthorizationById(Long id) {
+        return userAuthorizationMapper.selectById(id);
+    }
+
+    @Override
     public UserAuthorization getUserAuthorizationByMobile(String phone) {
         return userAuthorizationMapper.selectOne(Wrappers.lambdaQuery(UserAuthorization.class).eq(UserAuthorization::getLoginPhone, phone));
     }
@@ -47,5 +52,10 @@ public class UserServiceApiImpl implements UserService {
     @Override
     public Integer modifyServerFlag(Long userId) {
         return userInfoMapper.updateById(UserInfo.builder().userId(userId).serverOwnerFlag(true).build());
+    }
+
+    @Override
+    public Integer updateUserAuthorizationById(UserAuthorization userAuthorization) {
+        return userAuthorizationMapper.updateById(userAuthorization);
     }
 }
