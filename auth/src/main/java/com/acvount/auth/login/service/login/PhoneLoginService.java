@@ -8,7 +8,7 @@ import com.acvount.common.core.id.SnowflakeIdGenerator;
 import com.acvount.sms.code.bean.SendPhoneCodeSmsDTO;
 import com.acvount.sms.code.constants.RocketMQConstants;
 import com.acvount.sms.code.constants.topic.LoginTopicConstants;
-import com.acvount.user.api.UserService;
+import com.acvount.user.api.UserServiceApi;
 import com.acvount.user.bean.UserInfo;
 import com.alibaba.fastjson.JSON;
 import jakarta.annotation.Resource;
@@ -36,7 +36,7 @@ public class PhoneLoginService {
     public static final Integer ERROR_COUNT = 5;
     @SuppressWarnings("unused")
     @DubboReference
-    private UserService userService;
+    private UserServiceApi userServiceApi;
     @Resource
     private StreamBridge streamBridge;
     @Resource

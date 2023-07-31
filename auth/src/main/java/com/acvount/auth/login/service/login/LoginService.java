@@ -4,7 +4,7 @@ import cn.dev33.satoken.stp.StpUtil;
 import com.acvount.auth.login.service.register.RegisterService;
 import com.acvount.auth.permission.service.PermissionService;
 import com.acvount.auth.permission.service.RoleService;
-import com.acvount.user.api.UserService;
+import com.acvount.user.api.UserServiceApi;
 import com.acvount.user.bean.UserInfo;
 import com.alibaba.nacos.shaded.com.google.common.collect.Lists;
 import jakarta.annotation.Resource;
@@ -38,10 +38,10 @@ public class LoginService {
     private static final Integer LIST_SPLIT_SIZE = 50;
     @DubboReference
     @SuppressWarnings("unused")
-    private UserService userService;
+    private UserServiceApi userServiceApi;
 
     public UserInfo checkAccountPhoneAndCreateIfNeeded(String phone) {
-        UserInfo user = userService.getUserByMobile(phone);
+        UserInfo user = userServiceApi.getUserByMobile(phone);
         if (Objects.isNull(user) || Objects.equals(user.getUserId(), NumberUtils.LONG_ZERO)) {
             return registerService.createAccount(phone);
         }

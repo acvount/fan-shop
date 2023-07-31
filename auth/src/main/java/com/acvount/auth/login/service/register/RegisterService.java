@@ -2,7 +2,7 @@ package com.acvount.auth.login.service.register;
 
 import com.acvount.auth.login.service.password.strategy.PasswordEncryptionStrategy;
 import com.acvount.common.core.id.SnowflakeIdGenerator;
-import com.acvount.user.api.UserService;
+import com.acvount.user.api.UserServiceApi;
 import com.acvount.user.bean.UserAuthorization;
 import com.acvount.user.bean.UserInfo;
 import io.micrometer.common.util.StringUtils;
@@ -25,7 +25,7 @@ public class RegisterService {
 
     @DubboReference()
     @SuppressWarnings("unused")
-    private UserService userService;
+    private UserServiceApi userServiceApi;
 
     public UserInfo createAccount(String phone) {
         return createAccount(phone, Strings.EMPTY);
@@ -37,7 +37,7 @@ public class RegisterService {
         userInfo.setUserId(userId);
         UserAuthorization userAuthorization;
         userAuthorization = StringUtils.isNotBlank(phone) ? generPhoneCreateAccount(phone) : generPasswordCreateAccount(phone, password);
-        return userService.createUser(userInfo, userAuthorization);
+        return userServiceApi.createUser(userInfo, userAuthorization);
     }
 
     private UserAuthorization generPasswordCreateAccount(String phone, String password) {

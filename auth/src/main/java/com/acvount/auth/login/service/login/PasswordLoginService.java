@@ -4,7 +4,7 @@ import com.acvount.auth.login.bean.vo.LoginVO;
 import com.acvount.auth.login.service.password.strategy.PasswordEncryptionStrategy;
 import com.acvount.common.core.exception.BaseException;
 import com.acvount.common.core.exception.config.ExceptionType;
-import com.acvount.user.api.UserService;
+import com.acvount.user.api.UserServiceApi;
 import com.acvount.user.bean.UserAuthorization;
 import jakarta.annotation.Resource;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -28,7 +28,7 @@ public class PasswordLoginService {
     private RedisTemplate<String, String> redisTemplate;
 
     @Resource
-    private UserService userService;
+    private UserServiceApi userServiceApi;
 
     @Resource
     private LoginService loginService;
@@ -45,7 +45,7 @@ public class PasswordLoginService {
             throw new BaseException(ExceptionType.User_Password_Error_Count_Gt_10);
         }
 
-        UserAuthorization userAuthorizationByMobile = userService.getUserAuthorizationByMobile(loginVO.getPhone());
+        UserAuthorization userAuthorizationByMobile = userServiceApi.getUserAuthorizationByMobile(loginVO.getPhone());
         if (PasswordEncryptionStrategy.getStrategy(userAuthorizationByMobile.getEncryptionType()).checkPassword(loginVO.getPassword(), userAuthorizationByMobile.getSalt(), userAuthorizationByMobile.getPasswordHash())) {
             return loginService.login(userAuthorizationByMobile.getUserId());
         }
