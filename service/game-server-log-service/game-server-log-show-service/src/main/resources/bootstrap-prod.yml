@@ -1,0 +1,27 @@
+spring:
+  application:
+    name: server-log-show-service
+  cloud:
+    nacos:
+      server-addr: 172.17.203.165:8848
+      username: nacos
+      password: cc1234567.
+      discovery:
+        group: prod
+        namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
+      config:
+        group: prod
+        namespace: 84c25bdd-658c-4cb8-acf3-7031e154d5aa
+        file-extension: yaml
+        extension-configs:
+          - data-id: game-server-log-show-prod.yaml
+            group: game_server_log
+            refresh: true
+
+          - data-id: game-log-redis.yaml
+            group: game_server_log
+            refresh: true
+
+          - data-id: common-mybatis-plus.yaml
+            group: common
+            refresh: true
