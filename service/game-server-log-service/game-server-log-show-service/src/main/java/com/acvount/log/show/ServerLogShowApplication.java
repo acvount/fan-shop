@@ -14,8 +14,8 @@ import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 @EnableDubbo
 @EnableDiscoveryClient
 @SpringBootApplication
-public class GameLogShowApplication {
+public class ServerLogShowApplication {
     public static void main(String[] args) {
-        new SpringApplicationBuilder(GameLogShowApplication.class).run(args);
+        new SpringApplicationBuilder(ServerLogShowApplication.class).run(args);
     }
 }
