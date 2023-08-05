@@ -32,10 +32,7 @@ import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -144,6 +141,7 @@ public class FTPLogThread implements Runnable {
         ftpMetadata.setFileTypes(initFileTypeMap());
         ftpMetadata.setCreateTime(LocalDateTime.now());
         ftpMetadata.setLastRunTime(LocalDateTime.now());
+        updateCacheAndDB(ftpMetadata);
         return start(ftpClient, ftpMetadata);
     }
 
@@ -160,18 +158,6 @@ public class FTPLogThread implements Runnable {
         fileMD5DTO.setLastFileMd5("-");
         fileMD5DTO.setLastLength(0L);
         fileMD5DTO.setLastTime(localDateTime);
-        ServerFTPTaskStats serverFTPTaskStats = new ServerFTPTaskStats();
-        serverFTPTaskStats.setFtpId(serverFTP.getId());
-        serverFTPTaskStats.setThreadId(IDUtils.programID());
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JavaTimeModule());
-            String s = mapper.writeValueAsString(fileMD5DTO);
-            redisTemplate.opsForValue().set(getFTPMetadataKey(), s, 10, TimeUnit.MINUTES);
-            serverFTPTaskStatsMapper.insert(serverFTPTaskStats);
-        } catch (Exception e) {
-            log.error("初始化MD5DTO InsertDB ｜ 设置Cache 失败");
-        }
         return fileMD5DTO;
     }
 
@@ -285,6 +271,9 @@ public class FTPLogThread implements Runnable {
     }
 
     private List<String> simpleProcessContent(String content, String type) {
+        if (StringUtils.isBlank(content)) {
+            return Collections.EMPTY_LIST;
+        }
         return Arrays.stream(content.split("\n")).filter(StringUtils::isNotBlank).collect(Collectors.toList());
     }
 
@@ -344,7 +333,12 @@ public class FTPLogThread implements Runnable {
         }
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
-        return mapper.readValue(json, FTPMetadata.class);
+        try {
+            return mapper.readValue(json, FTPMetadata.class);
+        } catch (Exception e) {
+            System.out.println(json);
+            throw new RuntimeException("st");
+        }
     }
 
     private String getDBMetadata() {
