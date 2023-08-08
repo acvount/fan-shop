@@ -30,7 +30,7 @@ public class EconomyParserChecker {
 
     public EconomyParser getEconomyParser(String content) {
         for (LogType logType : LogType.values()) {
-            if (content.toLowerCase().matches(".*\\[trade\\] " + logType + ".*")) {
+            if (content.toLowerCase().matches(".*\\[trade\\] " + logType.toString().toLowerCase() + ".*")) {
                 return economyParsers.get(logType);
             }
         }
